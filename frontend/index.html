@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PredictLabs - Komparasi Gol & xG Tim Sepak Bola</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="matrix-theme">
+    <!-- Header: Logo | League Switcher | Sync Data -->
+    <header class="top-nav">
+        <div class="nav-container">
+            <div class="brand">
+                <i class="fa-solid fa-futbol brand-icon"></i>
+                <span class="brand-name">Predict<span class="highlight">Labs</span></span>
+            </div>
+
+            <div class="league-tabs" id="leagueTabs">
+                <button class="league-pill active" data-league="epl">Premier League</button>
+                <button class="league-pill" data-league="laliga">La Liga</button>
+                <button class="league-pill" data-league="bundesliga">Bundesliga</button>
+                <button class="league-pill" data-league="seriea">Serie A</button>
+                <button class="league-pill" data-league="ligue1">Ligue 1</button>
+                <button class="league-pill" data-league="eredivisie">Eredivisie</button>
+            </div>
+
+            <div class="nav-right">
+                <button id="btnSync" class="btn-sync" title="Perbarui data terbaru">
+                    <i class="fa-solid fa-rotate"></i> Sync Data
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-wrapper">
+        <!-- Filter Tahun Kompetisi (Season Selector) -->
+        <section class="season-filter-section">
+            <span class="filter-label"><i class="fa-solid fa-calendar-days"></i> Musim Kompetisi:</span>
+            <div class="season-pills" id="seasonPills">
+                <button class="season-btn active" data-season="2026/2027">2026/2027 (Musim Ini)</button>
+                <button class="season-btn" data-season="2025/2026">2025/2026 (1 Musim Lalu)</button>
+            </div>
+        </section>
+
+        <!-- Team Selectors & Venue Pills -->
+        <section class="selectors-section">
+            <div class="team-column team-column-left">
+                <div class="select-wrapper">
+                    <select id="team1Select" class="team-dropdown">
+                        <option value="">Memuat Tim 1...</option>
+                    </select>
+                </div>
+                <div class="venue-pills" id="team1VenuePills">
+                    <button class="venue-btn active" data-venue="home">Home</button>
+                    <button class="venue-btn" data-venue="away">Away</button>
+                    <button class="venue-btn" data-venue="overall">Overall</button>
+                </div>
+            </div>
+
+            <div class="team-column team-column-right">
+                <div class="select-wrapper">
+                    <select id="team2Select" class="team-dropdown">
+                        <option value="">Memuat Tim 2...</option>
+                    </select>
+                </div>
+                <div class="venue-pills" id="team2VenuePills">
+                    <button class="venue-btn data-venue-home" data-venue="home">Home</button>
+                    <button class="venue-btn active data-venue-away" data-venue="away">Away</button>
+                    <button class="venue-btn data-venue-overall" data-venue="overall">Overall</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Center Match Filter Pills (Last 3, Last 5, Last 10) -->
+        <section class="matches-filter-section">
+            <div class="matches-pills" id="matchFilterPills">
+                <button class="match-btn" data-n="3">Last 3</button>
+                <button class="match-btn" data-n="5">Last 5</button>
+                <button class="match-btn active" data-n="10">Last 10</button>
+            </div>
+        </section>
+
+        <!-- Symmetrical Comparison Matrix Table -->
+        <section class="matrix-card">
+            <table class="matrix-table">
+                <!-- Group Headers -->
+                <thead>
+                    <tr class="header-group-row">
+                        <!-- Tim 1 Group -->
+                        <th colspan="3" class="group-header group-mean-1" id="labelTeam1Mean">Mean</th>
+                        <th colspan="3" class="group-header group-med-1" id="labelTeam1Med">Median</th>
+                        <!-- Center Metric Space -->
+                        <th class="metric-center-header"></th>
+                        <!-- Tim 2 Group -->
+                        <th colspan="3" class="group-header group-mean-2" id="labelTeam2Mean">Mean</th>
+                        <th colspan="3" class="group-header group-med-2" id="labelTeam2Med">Median</th>
+                    </tr>
+                    <tr class="header-sub-row">
+                        <!-- Tim 1 Sub columns -->
+                        <th class="sub-col">HT</th>
+                        <th class="sub-col">2HT</th>
+                        <th class="sub-col">FT</th>
+                        <th class="sub-col">HT</th>
+                        <th class="sub-col">2HT</th>
+                        <th class="sub-col">FT</th>
+
+                        <!-- Center Label Header -->
+                        <th class="metric-label-col">METRIK</th>
+
+                        <!-- Tim 2 Sub columns -->
+                        <th class="sub-col">HT</th>
+                        <th class="sub-col">2HT</th>
+                        <th class="sub-col">FT</th>
+                        <th class="sub-col">HT</th>
+                        <th class="sub-col">2HT</th>
+                        <th class="sub-col">FT</th>
+                    </tr>
+                </thead>
+                <tbody id="matrixTableBody">
+                    <!-- Row: Goal -->
+                    <tr data-metric="goal">
+                        <td class="t1-mean-ht">-</td><td class="t1-mean-2ht">-</td><td class="t1-mean-ft font-bold">-</td>
+                        <td class="t1-med-ht">-</td><td class="t1-med-2ht">-</td><td class="t1-med-ft font-bold">-</td>
+                        <td class="metric-name font-bold text-accent">Goal</td>
+                        <td class="t2-mean-ht">-</td><td class="t2-mean-2ht">-</td><td class="t2-mean-ft font-bold">-</td>
+                        <td class="t2-med-ht">-</td><td class="t2-med-2ht">-</td><td class="t2-med-ft font-bold">-</td>
+                    </tr>
+
+                    <!-- Row: xG -->
+                    <tr data-metric="xg">
+                        <td class="t1-mean-ht">-</td><td class="t1-mean-2ht">-</td><td class="t1-mean-ft font-bold">-</td>
+                        <td class="t1-med-ht">-</td><td class="t1-med-2ht">-</td><td class="t1-med-ft font-bold">-</td>
+                        <td class="metric-name font-bold text-cyan">xG</td>
+                        <td class="t2-mean-ht">-</td><td class="t2-mean-2ht">-</td><td class="t2-mean-ft font-bold">-</td>
+                        <td class="t2-med-ht">-</td><td class="t2-med-2ht">-</td><td class="t2-med-ft font-bold">-</td>
+                    </tr>
+
+                    <!-- Row: Bobol -->
+                    <tr data-metric="bobol">
+                        <td class="t1-mean-ht">-</td><td class="t1-mean-2ht">-</td><td class="t1-mean-ft font-bold text-red">-</td>
+                        <td class="t1-med-ht">-</td><td class="t1-med-2ht">-</td><td class="t1-med-ft font-bold text-red">-</td>
+                        <td class="metric-name font-bold text-red">Bobol</td>
+                        <td class="t2-mean-ht">-</td><td class="t2-mean-2ht">-</td><td class="t2-mean-ft font-bold text-red">-</td>
+                        <td class="t2-med-ht">-</td><td class="t2-med-2ht">-</td><td class="t2-med-ft font-bold text-red">-</td>
+                    </tr>
+
+                    <!-- Row: xGA -->
+                    <tr data-metric="xga">
+                        <td class="t1-mean-ht">-</td><td class="t1-mean-2ht">-</td><td class="t1-mean-ft font-bold text-red">-</td>
+                        <td class="t1-med-ht">-</td><td class="t1-med-2ht">-</td><td class="t1-med-ft font-bold text-red">-</td>
+                        <td class="metric-name font-bold text-red">xGA</td>
+                        <td class="t2-mean-ht">-</td><td class="t2-mean-2ht">-</td><td class="t2-mean-ft font-bold text-red">-</td>
+                        <td class="t2-med-ht">-</td><td class="t2-med-2ht">-</td><td class="t2-med-ft font-bold text-red">-</td>
+                    </tr>
+
+                    <!-- Asian Lines Rows -->
+                    <tr data-metric="o025">
+                        <td class="t1-mean-ht">-</td><td class="t1-mean-2ht">-</td><td class="t1-mean-ft">-</td>
+                        <td class="t1-med-ht">-</td><td class="t1-med-2ht">-</td><td class="t1-med-ft">-</td>
+                        <td class="metric-name">0,25</td>
+                        <td class="t2-mean-ht">-</td><td class="t2-mean-2ht">-</td><td class="t2-mean-ft">-</td>
+                        <td class="t2-med-ht">-</td><td class="t2-med-2ht">-</td><td class="t2-med-ft">-</td>
+                    </tr>
+
+                    <tr data-metric="o075">
+                        <td class="t1-mean-ht">-</td><td class="t1-mean-2ht">-</td><td class="t1-mean-ft">-</td>
+                        <td class="t1-med-ht">-</td><td class="t1-med-2ht">-</td><td class="t1-med-ft">-</td>
+                        <td class="metric-name">0,75</td>
+                        <td class="t2-mean-ht">-</td><td class="t2-mean-2ht">-</td><td class="t2-mean-ft">-</td>
+                        <td class="t2-med-ht">-</td><td class="t2-med-2ht">-</td><td class="t2-med-ft">-</td>
+                    </tr>
+
+                    <tr data-metric="o125">
+                        <td class="t1-mean-ht">-</td><td class="t1-mean-2ht">-</td><td class="t1-mean-ft">-</td>
+                        <td class="t1-med-ht">-</td><td class="t1-med-2ht">-</td><td class="t1-med-ft">-</td>
+                        <td class="metric-name">1,25</td>
+                        <td class="t2-mean-ht">-</td><td class="t2-mean-2ht">-</td><td class="t2-mean-ft">-</td>
+                        <td class="t2-med-ht">-</td><td class="t2-med-2ht">-</td><td class="t2-med-ft">-</td>
+                    </tr>
+
+                    <tr data-metric="o175">
+                        <td class="t1-mean-ht">-</td><td class="t1-mean-2ht">-</td><td class="t1-mean-ft">-</td>
+                        <td class="t1-med-ht">-</td><td class="t1-med-2ht">-</td><td class="t1-med-ft">-</td>
+                        <td class="metric-name">1,75</td>
+                        <td class="t2-mean-ht">-</td><td class="t2-mean-2ht">-</td><td class="t2-mean-ft">-</td>
+                        <td class="t2-med-ht">-</td><td class="t2-med-2ht">-</td><td class="t2-med-ft">-</td>
+                    </tr>
+
+                    <tr data-metric="o225">
+                        <td class="t1-mean-ht">-</td><td class="t1-mean-2ht">-</td><td class="t1-mean-ft">-</td>
+                        <td class="t1-med-ht">-</td><td class="t1-med-2ht">-</td><td class="t1-med-ft">-</td>
+                        <td class="metric-name font-bold">2,25</td>
+                        <td class="t2-mean-ht">-</td><td class="t2-mean-2ht">-</td><td class="t2-mean-ft">-</td>
+                        <td class="t2-med-ht">-</td><td class="t2-med-2ht">-</td><td class="t2-med-ft">-</td>
+                    </tr>
+
+                    <tr data-metric="o275">
+                        <td class="t1-mean-ht">-</td><td class="t1-mean-2ht">-</td><td class="t1-mean-ft">-</td>
+                        <td class="t1-med-ht">-</td><td class="t1-med-2ht">-</td><td class="t1-med-ft">-</td>
+                        <td class="metric-name font-bold">2,75</td>
+                        <td class="t2-mean-ht">-</td><td class="t2-mean-2ht">-</td><td class="t2-mean-ft">-</td>
+                        <td class="t2-med-ht">-</td><td class="t2-med-2ht">-</td><td class="t2-med-ft">-</td>
+                    </tr>
+
+                    <tr data-metric="o325">
+                        <td class="t1-mean-ht">-</td><td class="t1-mean-2ht">-</td><td class="t1-mean-ft">-</td>
+                        <td class="t1-med-ht">-</td><td class="t1-med-2ht">-</td><td class="t1-med-ft">-</td>
+                        <td class="metric-name">3,25</td>
+                        <td class="t2-mean-ht">-</td><td class="t2-mean-2ht">-</td><td class="t2-mean-ft">-</td>
+                        <td class="t2-med-ht">-</td><td class="t2-med-2ht">-</td><td class="t2-med-ft">-</td>
+                    </tr>
+
+                    <tr data-metric="o375">
+                        <td class="t1-mean-ht">-</td><td class="t1-mean-2ht">-</td><td class="t1-mean-ft">-</td>
+                        <td class="t1-med-ht">-</td><td class="t1-med-2ht">-</td><td class="t1-med-ft">-</td>
+                        <td class="metric-name">3,75</td>
+                        <td class="t2-mean-ht">-</td><td class="t2-mean-2ht">-</td><td class="t2-mean-ft">-</td>
+                        <td class="t2-med-ht">-</td><td class="t2-med-2ht">-</td><td class="t2-med-ft">-</td>
+                    </tr>
+
+                    <tr data-metric="o425">
+                        <td class="t1-mean-ht">-</td><td class="t1-mean-2ht">-</td><td class="t1-mean-ft">-</td>
+                        <td class="t1-med-ht">-</td><td class="t1-med-2ht">-</td><td class="t1-med-ft">-</td>
+                        <td class="metric-name">4,25</td>
+                        <td class="t2-mean-ht">-</td><td class="t2-mean-2ht">-</td><td class="t2-mean-ft">-</td>
+                        <td class="t2-med-ht">-</td><td class="t2-med-2ht">-</td><td class="t2-med-ft">-</td>
+                    </tr>
+
+                    <tr data-metric="o475">
+                        <td class="t1-mean-ht">-</td><td class="t1-mean-2ht">-</td><td class="t1-mean-ft">-</td>
+                        <td class="t1-med-ht">-</td><td class="t1-med-2ht">-</td><td class="t1-med-ft">-</td>
+                        <td class="metric-name">4,75</td>
+                        <td class="t2-mean-ht">-</td><td class="t2-mean-2ht">-</td><td class="t2-mean-ft">-</td>
+                        <td class="t2-med-ht">-</td><td class="t2-med-2ht">-</td><td class="t2-med-ft">-</td>
+                    </tr>
+
+                    <tr data-metric="o525">
+                        <td class="t1-mean-ht">-</td><td class="t1-mean-2ht">-</td><td class="t1-mean-ft">-</td>
+                        <td class="t1-med-ht">-</td><td class="t1-med-2ht">-</td><td class="t1-med-ft">-</td>
+                        <td class="metric-name">5,25</td>
+                        <td class="t2-mean-ht">-</td><td class="t2-mean-2ht">-</td><td class="t2-mean-ft">-</td>
+                        <td class="t2-med-ht">-</td><td class="t2-med-2ht">-</td><td class="t2-med-ft">-</td>
+                    </tr>
+
+                    <tr data-metric="o575">
+                        <td class="t1-mean-ht">-</td><td class="t1-mean-2ht">-</td><td class="t1-mean-ft">-</td>
+                        <td class="t1-med-ht">-</td><td class="t1-med-2ht">-</td><td class="t1-med-ft">-</td>
+                        <td class="metric-name">5,75</td>
+                        <td class="t2-mean-ht">-</td><td class="t2-mean-2ht">-</td><td class="t2-mean-ft">-</td>
+                        <td class="t2-med-ht">-</td><td class="t2-med-2ht">-</td><td class="t2-med-ft">-</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- PREDICTION SECTION (AI & Statistical Intelligence Engine) -->
+        <section class="prediction-card" id="predictionSection">
+            <div class="prediction-header">
+                <div class="prediction-title-group">
+                    <div class="title-with-badge">
+                        <i class="fa-solid fa-microchip ai-icon"></i>
+                        <h2>PREDIKSI OVER / UNDER STATISTIK</h2>
+                        <span class="badge-model">Poisson & xG Distribution</span>
+                        <span class="badge-match-active" id="predActiveMatchBadge">Basis: Last 10 Matches</span>
+                    </div>
+                    <p class="prediction-subtitle">Perhitungan probabilitas matematis Over/Under (Menang Penuh, Menang Setengah, Kalah Setengah, Seri/Dana Kembali, Kalah Penuh) untuk Babak 1 (HT), Babak 2 (2HT), dan Full Time (FT).</p>
+                </div>
+
+                <!-- Scenario Mode Selector (Venue Specific vs Overall + Standings) -->
+                <div class="scenario-toggle" id="scenarioToggle">
+                    <button class="scenario-btn active" data-scenario="venue">
+                        <i class="fa-solid fa-house-chimney"></i> Kandang vs Tandang
+                    </button>
+                    <button class="scenario-btn" data-scenario="overall">
+                        <i class="fa-solid fa-ranking-star"></i> Performa Overall & Klasemen
+                    </button>
+                </div>
+            </div>
+
+            <!-- Prediction Cards Grid (HT, 2HT, FT) -->
+            <div class="prediction-grid">
+                <!-- 1. Babak 1 (HT) -->
+                <div class="pred-period-card">
+                    <div class="period-header">
+                        <span class="period-title"><i class="fa-solid fa-stopwatch"></i> BABAK 1 (HT)</span>
+                        <span class="period-badge" id="htExpBadge">Exp: -</span>
+                    </div>
+                    
+                    <div class="pred-picks-list" id="htPicksList">
+                        <!-- Dynamic Picks -->
+                    </div>
+
+                    <div class="pred-reasoning-box">
+                        <div class="reasoning-title"><i class="fa-solid fa-circle-info"></i> Penjelasan Statistik:</div>
+                        <p class="reasoning-text" id="htReasoningText">Memuat analisis babak 1...</p>
+                    </div>
+                </div>
+
+                <!-- 2. Babak 2 (2HT) -->
+                <div class="pred-period-card">
+                    <div class="period-header">
+                        <span class="period-title"><i class="fa-solid fa-stopwatch-20"></i> BABAK 2 (2HT)</span>
+                        <span class="period-badge" id="shExpBadge">Exp: -</span>
+                    </div>
+                    
+                    <div class="pred-picks-list" id="shPicksList">
+                        <!-- Dynamic Picks -->
+                    </div>
+
+                    <div class="pred-reasoning-box">
+                        <div class="reasoning-title"><i class="fa-solid fa-circle-info"></i> Penjelasan Statistik:</div>
+                        <p class="reasoning-text" id="shReasoningText">Memuat analisis babak 2...</p>
+                    </div>
+                </div>
+
+                <!-- 3. Full Time (FT) -->
+                <div class="pred-period-card">
+                    <div class="period-header">
+                        <span class="period-title"><i class="fa-solid fa-flag-checkered"></i> FULL TIME (FT)</span>
+                        <span class="period-badge" id="ftExpBadge">Exp: -</span>
+                    </div>
+                    
+                    <div class="pred-picks-list" id="ftPicksList">
+                        <!-- Dynamic Picks -->
+                    </div>
+
+                    <div class="pred-reasoning-box">
+                        <div class="reasoning-title"><i class="fa-solid fa-circle-info"></i> Penjelasan Statistik:</div>
+                        <p class="reasoning-text" id="ftReasoningText">Memuat analisis 90 menit...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <p><strong>PredictLabs</strong> &copy; 2026. Sederhana, Presisi, dan Ringkas (Premier League, La Liga, Bundesliga, Serie A, Ligue 1, Eredivisie).</p>
+    </footer>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
