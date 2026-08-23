@@ -47,12 +47,15 @@ function initLeagueTabs() {
     btnSync.addEventListener('click', async () => {
         btnSync.classList.add('loading');
         btnSync.disabled = true;
+        const originalText = btnSync.innerHTML;
+        btnSync.innerHTML = '<i class="fa-solid fa-rotate"></i> Syncing All Leagues...';
         try {
-            await fetch(`${API_BASE}/api/refresh?league=${currentLeague}`, { method: 'POST' });
+            await fetch(`${API_BASE}/api/refresh?league=all`, { method: 'POST' });
             await loadLeague(currentLeague);
         } catch (e) {
             console.error('Sync error:', e);
         } finally {
+            btnSync.innerHTML = originalText;
             btnSync.classList.remove('loading');
             btnSync.disabled = false;
         }

@@ -104,8 +104,18 @@ async def get_prediction(
     }
 
 @app.post("/api/refresh")
-async def refresh_data(league: str = Query("epl")):
-    """Force re-scrapes latest match data for the league."""
+async def refresh_data(league: str = Query("all")):
+    """Force re-scrapes latest match data for one or all leagues."""
+    if league == "all":
+        results = {}
+        for lid in LEAGUES_CONFIG:
+            try:
+                engine.load_league_matches(lid, force_refresh=True)
+                results[lid] = "success"
+            except Exception as e:
+                results[lid] = f"error: {e}"
+        return {"status": "success", "message": "All leagues refreshed successfully", "results": results}
+
     if league not in LEAGUES_CONFIG:
         raise HTTPException(status_code=404, detail="League not supported")
     engine.load_league_matches(league, force_refresh=True)
