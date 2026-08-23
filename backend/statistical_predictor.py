@@ -48,23 +48,24 @@ def calculate_dixon_coles_total_pmf(lambda_h: float, lambda_a: float, max_goals:
 def calculate_asian_over_under_prob(line: float, pmf_or_lambda: Any) -> Dict[str, Any]:
     """
     Computes Asian Handicap Over/Under probabilities and settlement scenarios:
-    Lines: 0.25, 0.75, 1.25, 1.75, 2.25, 2.75, 3.25, 3.75, 4.25, 4.75, 5.25, 5.75
+    Lines: 0.25, 0.75, 1.25, 1.75, 2.25, 2.75, 3.25, 3.75, 4.25, 4.75, 5.25, 5.75, etc.
     """
     if isinstance(pmf_or_lambda, list):
         pmf = pmf_or_lambda
-        if len(pmf) < 16:
-            pmf = pmf + [0.0] * (16 - len(pmf))
+        if len(pmf) < 20:
+            pmf = pmf + [0.0] * (20 - len(pmf))
     else:
         lamb = float(pmf_or_lambda)
-        pmf = [poisson_pmf(k, lamb) for k in range(16)]
+        pmf = [poisson_pmf(k, lamb) for k in range(20)]
 
     base_n = int(math.floor(line))
     decimal_part = round(line - base_n, 2)
+    max_k = len(pmf)
 
     if decimal_part == 0.25:
-        p_over_win_full = sum(pmf[k] for k in range(base_n + 1, 16))
+        p_over_win_full = sum(pmf[k] for k in range(base_n + 1, max_k))
         p_over_win_half = 0.0
-        p_over_loss_half = pmf[base_n] if base_n < 16 else 0.0
+        p_over_loss_half = pmf[base_n] if base_n < max_k else 0.0
         p_over_loss_full = sum(pmf[k] for k in range(0, base_n))
 
         p_under_win_full = p_over_loss_full
@@ -73,8 +74,8 @@ def calculate_asian_over_under_prob(line: float, pmf_or_lambda: Any) -> Dict[str
         p_under_loss_full = p_over_win_full
 
     elif decimal_part == 0.75:
-        p_over_win_full = sum(pmf[k] for k in range(base_n + 2, 16))
-        p_over_win_half = pmf[base_n + 1] if base_n + 1 < 16 else 0.0
+        p_over_win_full = sum(pmf[k] for k in range(base_n + 2, max_k))
+        p_over_win_half = pmf[base_n + 1] if base_n + 1 < max_k else 0.0
         p_over_loss_half = 0.0
         p_over_loss_full = sum(pmf[k] for k in range(0, base_n + 1))
 
@@ -84,7 +85,8 @@ def calculate_asian_over_under_prob(line: float, pmf_or_lambda: Any) -> Dict[str
         p_under_loss_full = p_over_win_full
 
     else:
-        p_over_win_full = sum(pmf[k] for k in range(math.floor(line) + 1, 16))
+        # Whole or half lines
+        p_over_win_full = sum(pmf[k] for k in range(math.floor(line) + 1, max_k))
         p_over_win_half = 0.0
         p_over_loss_half = 0.0
         p_over_loss_full = 1.0 - p_over_win_full
@@ -216,19 +218,23 @@ def calculate_statistical_prediction(
     # Dixon-Coles Bivariate Joint PMF for Total Goals
     ht_total_pmf = calculate_dixon_coles_total_pmf(lam_t1_ht, lam_t2_ht, max_goals=12, rho=-0.12)
     sh_total_pmf = calculate_dixon_coles_total_pmf(lam_t1_2h, lam_t2_2h, max_goals=12, rho=-0.12)
-    ft_total_pmf = calculate_dixon_coles_total_pmf(lam_t1_ft, lam_t2_ft, max_goals=15, rho=-0.12)
+    ft_total_pmf = calculate_dixon_coles_total_pmf(lam_t1_ft, lam_t2_ft, max_goals=18, rho=-0.12)
 
-    # Comprehensive Line Calculations
+    # =========================================================================
+    # COMPREHENSIVE ASIAN LINE EVALUATION (BOTH OVER & UNDER EQUALLY COVERED)
+    # =========================================================================
+
     # 1. BABAK 1 (HT)
-    ht_all_lines = [0.25, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 2.25]
     ht_picks_list = []
-    for line in [0.25, 0.75, 1.25, 1.75, 2.25]:
+    # Match lines for HT: 0.25 to 3.25
+    for line in [0.25, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 2.25, 2.75, 3.25]:
         p = calculate_asian_over_under_prob(line, ht_total_pmf)
         p["label"] = f"Total Laga > {line} HT"
         p["category"] = "match"
         ht_picks_list.append(p)
 
-    for line in [0.25, 0.75, 1.25, 1.75]:
+    # Team lines for HT
+    for line in [0.25, 0.75, 1.0, 1.25, 1.5, 1.75, 2.25]:
         p1 = calculate_asian_over_under_prob(line, lam_t1_ht)
         p1["label"] = f"{team1_name} > {line} HT"
         p1["category"] = "team1"
@@ -239,19 +245,22 @@ def calculate_statistical_prediction(
         p2["category"] = "team2"
         ht_picks_list.append(p2)
 
-    # Sort HT by confidence descending
     ht_picks_list.sort(key=lambda x: x["conf_pct"], reverse=True)
     ht_high_prob = [p for p in ht_picks_list if p["conf_pct"] >= 85]
+    ht_high_over = [p for p in ht_high_prob if p["is_over"]]
+    ht_high_under = [p for p in ht_high_prob if not p["is_over"]]
 
     # 2. BABAK 2 (2HT)
     sh_picks_list = []
-    for line in [0.25, 0.75, 1.25, 1.75, 2.25, 2.75]:
+    # Match lines for 2HT: 0.25 to 4.25
+    for line in [0.25, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 2.25, 2.75, 3.25, 3.75, 4.25]:
         p = calculate_asian_over_under_prob(line, sh_total_pmf)
         p["label"] = f"Total Laga > {line} 2HT"
         p["category"] = "match"
         sh_picks_list.append(p)
 
-    for line in [0.25, 0.75, 1.25, 1.75]:
+    # Team lines for 2HT
+    for line in [0.25, 0.75, 1.0, 1.25, 1.5, 1.75, 2.25, 2.75]:
         p1 = calculate_asian_over_under_prob(line, lam_t1_2h)
         p1["label"] = f"{team1_name} > {line} 2HT"
         p1["category"] = "team1"
@@ -264,16 +273,20 @@ def calculate_statistical_prediction(
 
     sh_picks_list.sort(key=lambda x: x["conf_pct"], reverse=True)
     sh_high_prob = [p for p in sh_picks_list if p["conf_pct"] >= 85]
+    sh_high_over = [p for p in sh_high_prob if p["is_over"]]
+    sh_high_under = [p for p in sh_high_prob if not p["is_over"]]
 
     # 3. FULL TIME (FT)
     ft_picks_list = []
-    for line in [0.75, 1.25, 1.75, 2.0, 2.25, 2.5, 2.75, 3.0, 3.25, 3.75, 4.25, 4.75, 5.25]:
+    # Full match lines from 0.25 to 6.25
+    for line in [0.25, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 2.25, 2.5, 2.75, 3.0, 3.25, 3.5, 3.75, 4.0, 4.25, 4.75, 5.25, 5.75, 6.25]:
         p = calculate_asian_over_under_prob(line, ft_total_pmf)
         p["label"] = f"Total Laga > {line} FT"
         p["category"] = "match"
         ft_picks_list.append(p)
 
-    for line in [0.75, 1.25, 1.75, 2.25, 2.75]:
+    # Team lines for FT: 0.25 to 4.25
+    for line in [0.25, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 2.25, 2.5, 2.75, 3.25, 3.75, 4.25]:
         p1 = calculate_asian_over_under_prob(line, lam_t1_ft)
         p1["label"] = f"{team1_name} > {line} FT"
         p1["category"] = "team1"
@@ -286,6 +299,8 @@ def calculate_statistical_prediction(
 
     ft_picks_list.sort(key=lambda x: x["conf_pct"], reverse=True)
     ft_high_prob = [p for p in ft_picks_list if p["conf_pct"] >= 85]
+    ft_high_over = [p for p in ft_high_prob if p["is_over"]]
+    ft_high_under = [p for p in ft_high_prob if not p["is_over"]]
 
     # Overall high-confidence list across all periods
     all_high_confidence = (
@@ -301,17 +316,17 @@ def calculate_statistical_prediction(
     reasons = {
         "ht": (
             f"Babak 1 (HT): Ekspektasi gol gabungan terkalibrasi Dixon-Coles adalah {lam_tot_ht}. "
-            f"Terdapat {len(ht_high_prob)} opsi pasaran dengan probabilitas tinggi (≥ 85%). "
+            f"Terdeteksi {len(ht_high_over)} opsi OVER dan {len(ht_high_under)} opsi UNDER dengan probabilitas kuat (≥ 85%). "
             f"Efisiensi serangan {team1_name} ({t1_desc_eff}) dan {team2_name} ({t2_desc_eff}) membentuk pola babak 1."
         ),
         "2ht": (
             f"Babak 2 (2HT): Ekspektasi gol babak kedua berada di {lam_tot_2h}. "
-            f"Terdapat {len(sh_high_prob)} opsi pasaran dengan keyakinan kuat (≥ 85%). "
+            f"Terdapat {len(sh_high_over)} opsi OVER dan {len(sh_high_under)} opsi UNDER berpeluang tinggi (≥ 85%). "
             f"Intensitas paruh kedua lebih terbuka seiring dinamika kelelahan fisik pemain."
         ),
         "ft": (
             f"Full Time (FT): Agregat 90 menit menghasilkan total ekspektasi {lam_tot_ft} gol (xG {round(t1_v_xg_ft + t2_v_xg_ft, 2)} | Est. SoT {round(t1_sot_ft + t2_sot_ft, 1)}). "
-            f"Tercatat {len(ft_high_prob)} opsi taruhan berkualitas tinggi dengan probabilitas di atas 85%."
+            f"Tercatat {len(ft_high_over)} opsi OVER dan {len(ft_high_under)} opsi UNDER berkualitas tinggi dengan probabilitas di atas 85%."
         )
     }
 
@@ -330,18 +345,24 @@ def calculate_statistical_prediction(
             "ht": {
                 "all_picks": ht_picks_list,
                 "high_prob": ht_high_prob,
+                "high_over": ht_high_over,
+                "high_under": ht_high_under,
                 "match_075": next((p for p in ht_picks_list if "Total Laga > 0.75" in p["label"]), ht_picks_list[0]),
                 "match_125": next((p for p in ht_picks_list if "Total Laga > 1.25" in p["label"]), ht_picks_list[0])
             },
             "2ht": {
                 "all_picks": sh_picks_list,
                 "high_prob": sh_high_prob,
+                "high_over": sh_high_over,
+                "high_under": sh_high_under,
                 "match_075": next((p for p in sh_picks_list if "Total Laga > 0.75" in p["label"]), sh_picks_list[0]),
                 "match_125": next((p for p in sh_picks_list if "Total Laga > 1.25" in p["label"]), sh_picks_list[0])
             },
             "ft": {
                 "all_picks": ft_picks_list,
                 "high_prob": ft_high_prob,
+                "high_over": ft_high_over,
+                "high_under": ft_high_under,
                 "match_175": next((p for p in ft_picks_list if "Total Laga > 1.75" in p["label"]), ft_picks_list[0]),
                 "match_225": next((p for p in ft_picks_list if "Total Laga > 2.25" in p["label"]), ft_picks_list[0]),
                 "match_275": next((p for p in ft_picks_list if "Total Laga > 2.75" in p["label"]), ft_picks_list[0]),

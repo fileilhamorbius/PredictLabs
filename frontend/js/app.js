@@ -322,19 +322,24 @@ function renderPredictions() {
         `;
     }
 
-    function renderList(containerId, picksArray, highProbArray) {
+    function renderList(containerId, picksArray, highProbArray, highOverArray, highUnderArray) {
         const container = document.getElementById(containerId);
         if (!container) return;
 
         let displayPicks = [];
         if (currentConfFilter === 'high') {
-            displayPicks = (highProbArray && highProbArray.length > 0) ? highProbArray : (picksArray ? picksArray.slice(0, 3) : []);
+            displayPicks = (highProbArray && highProbArray.length > 0) ? highProbArray : (picksArray ? picksArray.slice(0, 4) : []);
+        } else if (currentConfFilter === 'over') {
+            displayPicks = (highOverArray && highOverArray.length > 0) ? highOverArray : (picksArray ? picksArray.filter(p => p.is_over).slice(0, 3) : []);
+        } else if (currentConfFilter === 'under') {
+            displayPicks = (highUnderArray && highUnderArray.length > 0) ? highUnderArray : (picksArray ? picksArray.filter(p => !p.is_over).slice(0, 3) : []);
         } else {
             displayPicks = picksArray || [];
         }
 
         if (displayPicks.length === 0) {
-            container.innerHTML = `<div style="color: var(--text-dim); font-size: 0.8rem; text-align: center; padding: 12px;">Tidak ada opsi di atas 85%.</div>`;
+            const filterName = currentConfFilter === 'over' ? 'OVER' : (currentConfFilter === 'under' ? 'UNDER' : '');
+            container.innerHTML = `<div style="color: var(--text-dim); font-size: 0.8rem; text-align: center; padding: 16px;">Tidak ada opsi ${filterName} di atas 85% untuk babak ini.</div>`;
             return;
         }
 
@@ -346,7 +351,7 @@ function renderPredictions() {
     document.getElementById('htExpBadge').textContent = `λ Match: ${htExp.total} gol (xG)`;
 
     const htP = predObj.predictions.ht;
-    renderList('htPicksList', htP.all_picks, htP.high_prob);
+    renderList('htPicksList', htP.all_picks, htP.high_prob, htP.high_over, htP.high_under);
     document.getElementById('htReasoningText').textContent = predObj.reasoning.ht;
 
     // 2. Babak 2 (2HT)
@@ -354,7 +359,7 @@ function renderPredictions() {
     document.getElementById('shExpBadge').textContent = `λ Match: ${shExp.total} gol (xG)`;
 
     const shP = predObj.predictions['2ht'];
-    renderList('shPicksList', shP.all_picks, shP.high_prob);
+    renderList('shPicksList', shP.all_picks, shP.high_prob, shP.high_over, shP.high_under);
     document.getElementById('shReasoningText').textContent = predObj.reasoning['2ht'];
 
     // 3. Full Time (FT)
@@ -362,7 +367,8 @@ function renderPredictions() {
     document.getElementById('ftExpBadge').textContent = `λ Match: ${ftExp.total} gol (xG)`;
 
     const ftP = predObj.predictions.ft;
-    renderList('ftPicksList', ftP.all_picks, ftP.high_prob);
+    renderList('ftPicksList', ftP.all_picks, ftP.high_prob, ftP.high_over, ftP.high_under);
     document.getElementById('ftReasoningText').textContent = predObj.reasoning.ft;
 }
+
 
