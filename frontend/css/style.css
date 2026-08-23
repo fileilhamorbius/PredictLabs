@@ -670,17 +670,24 @@ body.matrix-theme {
 .pred-picks-list {
     display: flex;
     flex-direction: column;
-    gap: 9px;
-    max-height: 480px;
+    gap: 10px;
+    max-height: 540px;
     overflow-y: auto;
-    padding-right: 4px;
+    padding-right: 6px;
 }
 .pred-picks-list::-webkit-scrollbar {
-    width: 4px;
+    width: 5px;
+}
+.pred-picks-list::-webkit-scrollbar-track {
+    background: rgba(10, 24, 38, 0.5);
+    border-radius: 4px;
 }
 .pred-picks-list::-webkit-scrollbar-thumb {
-    background: rgba(56, 189, 248, 0.2);
-    border-radius: 2px;
+    background: rgba(56, 189, 248, 0.25);
+    border-radius: 4px;
+}
+.pred-picks-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(56, 189, 248, 0.45);
 }
 
 /* =========================================================
@@ -690,12 +697,15 @@ body.matrix-theme {
     background: #0d2132;
     border: 1px solid rgba(30, 64, 92, 0.6);
     border-radius: 8px;
-    padding: 10px 12px;
+    padding: 11px 13px;
     display: flex;
     flex-direction: column;
     gap: 8px;
     position: relative;
     overflow: hidden;
+    flex-shrink: 0; /* CRITICAL: Prevents cards from squishing/collapsing */
+    min-height: 66px;
+    box-sizing: border-box;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
