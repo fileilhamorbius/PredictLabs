@@ -247,18 +247,18 @@ def calculate_statistical_prediction(
     ht_picks_list = []
     for line in ht_asian_lines:
         p = calculate_asian_over_under_prob(line, ht_total_pmf)
-        p["label"] = f"Total Laga > {line} HT"
+        p["label"] = "Total Laga"
         p["category"] = "match"
         ht_picks_list.append(p)
 
     for line in [0.25, 0.75, 1.25, 1.75, 2.25]:
         p1 = calculate_asian_over_under_prob(line, lam_t1_ht)
-        p1["label"] = f"{team1_name} > {line} HT"
+        p1["label"] = team1_name
         p1["category"] = "team1"
         ht_picks_list.append(p1)
 
         p2 = calculate_asian_over_under_prob(line, lam_t2_ht)
-        p2["label"] = f"{team2_name} > {line} HT"
+        p2["label"] = team2_name
         p2["category"] = "team2"
         ht_picks_list.append(p2)
 
@@ -273,18 +273,18 @@ def calculate_statistical_prediction(
     sh_picks_list = []
     for line in sh_asian_lines:
         p = calculate_asian_over_under_prob(line, sh_total_pmf)
-        p["label"] = f"Total Laga > {line} 2HT"
+        p["label"] = "Total Laga"
         p["category"] = "match"
         sh_picks_list.append(p)
 
     for line in [0.25, 0.75, 1.25, 1.75, 2.25, 2.75]:
         p1 = calculate_asian_over_under_prob(line, lam_t1_2h)
-        p1["label"] = f"{team1_name} > {line} 2HT"
+        p1["label"] = team1_name
         p1["category"] = "team1"
         sh_picks_list.append(p1)
 
         p2 = calculate_asian_over_under_prob(line, lam_t2_2h)
-        p2["label"] = f"{team2_name} > {line} 2HT"
+        p2["label"] = team2_name
         p2["category"] = "team2"
         sh_picks_list.append(p2)
 
@@ -299,18 +299,18 @@ def calculate_statistical_prediction(
     ft_picks_list = []
     for line in ft_asian_lines:
         p = calculate_asian_over_under_prob(line, ft_total_pmf)
-        p["label"] = f"Total Laga > {line} FT"
+        p["label"] = "Total Laga"
         p["category"] = "match"
         ft_picks_list.append(p)
 
     for line in [0.25, 0.75, 1.25, 1.75, 2.25, 2.75, 3.25, 3.75, 4.25]:
         p1 = calculate_asian_over_under_prob(line, lam_t1_ft)
-        p1["label"] = f"{team1_name} > {line} FT"
+        p1["label"] = team1_name
         p1["category"] = "team1"
         ft_picks_list.append(p1)
 
         p2 = calculate_asian_over_under_prob(line, lam_t2_ft)
-        p2["label"] = f"{team2_name} > {line} FT"
+        p2["label"] = team2_name
         p2["category"] = "team2"
         ft_picks_list.append(p2)
 
