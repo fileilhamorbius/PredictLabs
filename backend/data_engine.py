@@ -7,8 +7,12 @@ import requests
 from typing import Dict, List, Any, Optional
 from backend.statistical_predictor import calculate_statistical_prediction
 
-CACHE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "cache")
-os.makedirs(CACHE_DIR, exist_ok=True)
+BUNDLED_CACHE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "cache")
+CACHE_DIR = "/tmp/cache" if (os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME")) else BUNDLED_CACHE_DIR
+try:
+    os.makedirs(CACHE_DIR, exist_ok=True)
+except Exception:
+    pass
 
 SEASONS = [
     {"id": "2026/2027", "name": "2026/2027 (Musim Ini)"},
@@ -148,9 +152,12 @@ class PredictLabsEngine:
             return self.cache[league_id]
 
         cache_file = os.path.join(CACHE_DIR, f"{league_id}_combined.json")
-        if not force_refresh and os.path.exists(cache_file):
+        bundled_file = os.path.join(BUNDLED_CACHE_DIR, f"{league_id}_combined.json")
+        target_read_file = cache_file if os.path.exists(cache_file) else bundled_file
+
+        if not force_refresh and os.path.exists(target_read_file):
             try:
-                with open(cache_file, "r", encoding="utf-8") as f:
+                with open(target_read_file, "r", encoding="utf-8") as f:
                     data = json.load(f)
                     if data and len(data) > 0:
                         self.cache[league_id] = data
@@ -163,9 +170,11 @@ class PredictLabsEngine:
             return []
 
         all_matches = []
+        import re
+
+        # 1. Fetch from Results URL
         try:
-            r = requests.get(config["flashscore_results"], headers=self.headers, timeout=5)
-            import re
+            r = requests.get(config["flashscore_results"], headers=self.headers, timeout=6)
             feed_match = re.search(r"cjs\.initialFeeds\['(?:results|summary-results)'\]\s*=\s*\{\s*data:\s*`([^`]+)`", r.text)
             if not feed_match:
                 feed_match = re.search(r'cjs\.initialFeeds\["(?:results|summary-results)"\]\s*=\s*\{\s*data:\s*`([^`]+)`', r.text)
@@ -175,10 +184,12 @@ class PredictLabsEngine:
         except Exception as e:
             print(f"Flashscore scrape error for {league_id}: {e}")
 
+        # 2. Fetch from Standings / Summary URL (Today's live matches)
         try:
-            r = requests.get(config["flashscore_standings"], headers=self.headers, timeout=5)
-            import re
+            r = requests.get(config["flashscore_standings"], headers=self.headers, timeout=6)
             feed_match = re.search(r"cjs\.initialFeeds\['(?:results|summary-results)'\]\s*=\s*\{\s*data:\s*`([^`]+)`", r.text)
+            if not feed_match:
+                feed_match = re.search(r'cjs\.initialFeeds\["(?:results|summary-results)"\]\s*=\s*\{\s*data:\s*`([^`]+)`', r.text)
             if feed_match:
                 fs_matches = self.parse_flashscore_feed(feed_match.group(1), league_id, season="2026/2027")
                 existing_keys = {f"{m['season']}_{m['date']}_{m['home_team']}_{m['away_team']}" for m in all_matches}
