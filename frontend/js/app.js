@@ -12,6 +12,7 @@ let team2Venue = 'away';
 let currentLastN = 10;
 let currentScenario = 'venue'; // 'venue' or 'overall'
 let currentConfFilter = 'high'; // 'high' (>=85%) or 'all'
+let currentBetMode = 'single'; // 'single' or 'parlay'
 let teamsList = [];
 let predictionData = null;
 
@@ -28,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initTeamDropdowns();
     initScenarioToggle();
     initConfToggle();
+    initBetModeToggle();
     
     // Initial Load
     loadLeague(currentLeague);
@@ -163,6 +165,36 @@ function initConfToggle() {
     });
 }
 
+// 8. Bet Mode Toggle (Single Bet vs Mix Parlay Safety)
+function initBetModeToggle() {
+    const bBtns = document.querySelectorAll('#betModeToggle .bet-mode-btn');
+    bBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            bBtns.forEach(b => {
+                b.classList.remove('active');
+                b.style.background = 'transparent';
+                b.style.borderColor = 'transparent';
+                b.style.color = 'var(--text-secondary)';
+            });
+            btn.classList.add('active');
+            btn.style.background = 'var(--btn-active)';
+            btn.style.borderColor = 'var(--accent-cyan)';
+            btn.style.color = '#ffffff';
+
+            currentBetMode = btn.getAttribute('data-mode');
+            const sub = document.getElementById('predictionSubtitle');
+            if (sub) {
+                if (currentBetMode === 'parlay') {
+                    sub.innerHTML = `🛡️ <strong>Mode Mix Parlay (Anti-Gugur Aktif)</strong>: Menghitung persentase kelangsungan tiket parley (100% - Resiko Kalah Penuh). Menang Setengah atau Kalah Setengah tidak menggagalkan akumulasi tiket!`;
+                } else {
+                    sub.innerHTML = `🎯 <strong>Mode Single Bet (Win Rate Aktif)</strong>: Perhitungan probabilitas kemenangan murni Pasaran Asia untuk Babak 1 (HT), Babak 2 (2HT), dan Full Time (FT).`;
+                }
+            }
+            renderPredictions();
+        });
+    });
+}
+
 // Master Loader
 async function loadLeague(leagueId) {
     try {
@@ -293,7 +325,7 @@ function formatCell(val, isAsian) {
     return val;
 }
 
-// Render Prediction Cards with Support for All Lines & >= 85% High Confidence Options
+// Render Prediction Cards with Support for Single Bet & Mix Parlay Modes
 function renderPredictions() {
     if (!predictionData) return;
 
@@ -302,39 +334,80 @@ function renderPredictions() {
     const team2 = predictionData.team2.name;
 
     function createPickItemHTML(pickData) {
-        const isHigh = pickData.conf_pct >= 85;
-        return `
-            <div class="pick-item ${isHigh ? 'high-conf' : ''}">
-                <div class="pick-main-row">
-                    <span class="pick-label">
-                        ${pickData.label}
-                        ${isHigh ? '<span class="badge-high-conf-tag"><i class="fa-solid fa-fire"></i> ≥85%</span>' : ''}
-                    </span>
-                    <div class="pick-result-badge">
-                        <span class="${pickData.is_over ? 'badge-pill-over' : 'badge-pill-under'}">${pickData.pick}</span>
-                        <span class="pick-conf" style="font-weight: 700; ${isHigh ? 'color: #22c55e;' : ''}">${pickData.conf_pct}%</span>
-                    </div>
+        const isParlayMode = currentBetMode === 'parlay';
+        const confValue = isParlayMode ? pickData.parlay_safety_pct : pickData.single_conf_pct;
+        const isHigh = confValue >= 85;
+
+        let badgeTag = '';
+        if (isParlayMode) {
+            badgeTag = isHigh ? `<span class="badge-parlay-tag"><i class="fa-solid fa-shield-halved"></i> Anti-Gugur ${confValue}%</span>` : '';
+        } else {
+            badgeTag = isHigh ? `<span class="badge-high-conf-tag"><i class="fa-solid fa-fire"></i> ≥85%</span>` : '';
+        }
+
+        let subRowHTML = '';
+        if (isParlayMode) {
+            subRowHTML = `
+                <div class="pick-sub-row" style="display: flex; justify-content: space-between; align-items: center; font-size: 0.74rem;">
+                    <span class="scenario-tag" style="color: #38bdf8;"><i class="fa-solid fa-shield"></i> Aman Parley (Resiko Gugur: ${pickData.parlay_loss_pct}%)</span>
+                    <span style="color: var(--text-dim);">${pickData.outcome_text}</span>
                 </div>
+            `;
+        } else {
+            subRowHTML = `
                 <div class="pick-sub-row">
                     <span class="scenario-tag"><i class="fa-solid fa-shield-halved"></i> ${pickData.outcome_text}</span>
                 </div>
+            `;
+        }
+
+        return `
+            <div class="pick-item ${isParlayMode ? (isHigh ? 'parlay-safe' : '') : (isHigh ? 'high-conf' : '')}">
+                <div class="pick-main-row">
+                    <span class="pick-label">
+                        ${pickData.label}
+                        ${badgeTag}
+                    </span>
+                    <div class="pick-result-badge">
+                        <span class="${pickData.is_over ? 'badge-pill-over' : 'badge-pill-under'}">${pickData.pick}</span>
+                        <span class="pick-conf" style="font-weight: 700; ${isParlayMode ? 'color: #38bdf8;' : (isHigh ? 'color: #22c55e;' : '')}">${confValue}% ${isParlayMode ? '<span style="font-size: 0.7rem; font-weight: normal; color: var(--text-secondary);">Aman</span>' : ''}</span>
+                    </div>
+                </div>
+                ${subRowHTML}
             </div>
         `;
     }
 
-    function renderList(containerId, picksArray, highProbArray, highOverArray, highUnderArray) {
+    function renderList(containerId, picksArray, highProbArray, highOverArray, highUnderArray, parlaySafeArray) {
         const container = document.getElementById(containerId);
         if (!container) return;
 
         let displayPicks = [];
-        if (currentConfFilter === 'high') {
-            displayPicks = (highProbArray && highProbArray.length > 0) ? highProbArray : (picksArray ? picksArray.slice(0, 4) : []);
-        } else if (currentConfFilter === 'over') {
-            displayPicks = (highOverArray && highOverArray.length > 0) ? highOverArray : (picksArray ? picksArray.filter(p => p.is_over).slice(0, 3) : []);
-        } else if (currentConfFilter === 'under') {
-            displayPicks = (highUnderArray && highUnderArray.length > 0) ? highUnderArray : (picksArray ? picksArray.filter(p => !p.is_over).slice(0, 3) : []);
+        const isParlayMode = currentBetMode === 'parlay';
+
+        if (isParlayMode) {
+            if (currentConfFilter === 'high') {
+                displayPicks = (parlaySafeArray && parlaySafeArray.length > 0) ? parlaySafeArray : (picksArray ? picksArray.slice(0, 4) : []);
+            } else if (currentConfFilter === 'over') {
+                displayPicks = (parlaySafeArray ? parlaySafeArray.filter(p => p.is_over) : []).slice(0, 4);
+                if (displayPicks.length === 0 && picksArray) displayPicks = picksArray.filter(p => p.is_over).slice(0, 3);
+            } else if (currentConfFilter === 'under') {
+                displayPicks = (parlaySafeArray ? parlaySafeArray.filter(p => !p.is_over) : []).slice(0, 4);
+                if (displayPicks.length === 0 && picksArray) displayPicks = picksArray.filter(p => !p.is_over).slice(0, 3);
+            } else {
+                displayPicks = picksArray ? [...picksArray].sort((a, b) => b.parlay_safety_pct - a.parlay_safety_pct) : [];
+            }
         } else {
-            displayPicks = picksArray || [];
+            // Single Bet Mode
+            if (currentConfFilter === 'high') {
+                displayPicks = (highProbArray && highProbArray.length > 0) ? highProbArray : (picksArray ? picksArray.slice(0, 4) : []);
+            } else if (currentConfFilter === 'over') {
+                displayPicks = (highOverArray && highOverArray.length > 0) ? highOverArray : (picksArray ? picksArray.filter(p => p.is_over).slice(0, 3) : []);
+            } else if (currentConfFilter === 'under') {
+                displayPicks = (highUnderArray && highUnderArray.length > 0) ? highUnderArray : (picksArray ? picksArray.filter(p => !p.is_over).slice(0, 3) : []);
+            } else {
+                displayPicks = picksArray || [];
+            }
         }
 
         if (displayPicks.length === 0) {
@@ -351,7 +424,7 @@ function renderPredictions() {
     document.getElementById('htExpBadge').textContent = `λ Match: ${htExp.total} gol (xG)`;
 
     const htP = predObj.predictions.ht;
-    renderList('htPicksList', htP.all_picks, htP.high_prob, htP.high_over, htP.high_under);
+    renderList('htPicksList', htP.all_picks, htP.high_prob, htP.high_over, htP.high_under, htP.parlay_safe);
     document.getElementById('htReasoningText').textContent = predObj.reasoning.ht;
 
     // 2. Babak 2 (2HT)
@@ -359,7 +432,7 @@ function renderPredictions() {
     document.getElementById('shExpBadge').textContent = `λ Match: ${shExp.total} gol (xG)`;
 
     const shP = predObj.predictions['2ht'];
-    renderList('shPicksList', shP.all_picks, shP.high_prob, shP.high_over, shP.high_under);
+    renderList('shPicksList', shP.all_picks, shP.high_prob, shP.high_over, shP.high_under, shP.parlay_safe);
     document.getElementById('shReasoningText').textContent = predObj.reasoning['2ht'];
 
     // 3. Full Time (FT)
@@ -367,8 +440,9 @@ function renderPredictions() {
     document.getElementById('ftExpBadge').textContent = `λ Match: ${ftExp.total} gol (xG)`;
 
     const ftP = predObj.predictions.ft;
-    renderList('ftPicksList', ftP.all_picks, ftP.high_prob, ftP.high_over, ftP.high_under);
+    renderList('ftPicksList', ftP.all_picks, ftP.high_prob, ftP.high_over, ftP.high_under, ftP.parlay_safe);
     document.getElementById('ftReasoningText').textContent = predObj.reasoning.ft;
 }
+
 
 

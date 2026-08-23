@@ -268,10 +268,20 @@
                         <span class="badge-model">Dixon-Coles & Shot Efficiency Model</span>
                         <span class="badge-match-active" id="predActiveMatchBadge">Basis: Last 10 Matches</span>
                     </div>
-                    <p class="prediction-subtitle">Perhitungan probabilitas matematis Over/Under (Menang Penuh, Menang Setengah, Kalah Setengah, Seri/Dana Kembali, Kalah Penuh) untuk Babak 1 (HT), Babak 2 (2HT), dan Full Time (FT).</p>
+                    <p class="prediction-subtitle" id="predictionSubtitle">Perhitungan probabilitas matematis Pasaran Asia: Single Bet Win Rate & Mix Parlay Safety Index (Anti-Kalah Penuh) untuk Babak 1 (HT), Babak 2 (2HT), dan Full Time (FT).</p>
                 </div>
 
-                <div class="prediction-actions-group" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <div class="prediction-actions-group" style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                    <!-- Betting Mode Selector (Single Bet vs Mix Parlay) -->
+                    <div class="bet-mode-toggle" id="betModeToggle" style="display: flex; gap: 4px; background: #0c202d; padding: 4px; border-radius: 6px; border: 1px solid rgba(56, 189, 248, 0.4);">
+                        <button class="bet-mode-btn active" data-mode="single" style="background: var(--btn-active); border: 1px solid var(--accent-cyan); color: #fff; padding: 6px 12px; border-radius: 4px; font-size: 0.78rem; font-weight: 800; cursor: pointer;">
+                            <i class="fa-solid fa-bullseye"></i> Single Bet
+                        </button>
+                        <button class="bet-mode-btn" data-mode="parlay" style="background: transparent; border: 1px solid transparent; color: var(--text-secondary); padding: 6px 12px; border-radius: 4px; font-size: 0.78rem; font-weight: 800; cursor: pointer;">
+                            <i class="fa-solid fa-shield-halved" style="color: #38bdf8;"></i> Mix Parlay (Anti-Gugur)
+                        </button>
+                    </div>
+
                     <!-- Confidence & Direction Filter Toggle -->
                     <div class="conf-toggle" id="confToggle" style="display: flex; gap: 4px; background: #091a26; padding: 4px; border-radius: 6px; border: 1px solid var(--border-color);">
                         <button class="conf-btn active" data-filter="high" style="background: var(--btn-active); border: 1px solid var(--accent-cyan); color: #fff; padding: 6px 10px; border-radius: 4px; font-size: 0.78rem; font-weight: 700; cursor: pointer;">

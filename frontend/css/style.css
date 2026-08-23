@@ -588,10 +588,29 @@ body.matrix-theme {
     border-left: 3px solid #22c55e;
 }
 
+.pick-item.parlay-safe {
+    border: 1px solid rgba(56, 189, 248, 0.45);
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.09) 0%, #0d2130 100%);
+    border-left: 3px solid #38bdf8;
+}
+
 .badge-high-conf-tag {
     background: rgba(34, 197, 94, 0.2);
     color: #22c55e;
     border: 1px solid rgba(34, 197, 94, 0.4);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 0.68rem;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.badge-parlay-tag {
+    background: rgba(56, 189, 248, 0.2);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.45);
     padding: 1px 6px;
     border-radius: 3px;
     font-size: 0.68rem;

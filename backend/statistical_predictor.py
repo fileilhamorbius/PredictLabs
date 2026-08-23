@@ -47,8 +47,9 @@ def calculate_dixon_coles_total_pmf(lambda_h: float, lambda_a: float, max_goals:
 
 def calculate_asian_over_under_prob(line: float, pmf_or_lambda: Any) -> Dict[str, Any]:
     """
-    Computes Pure Asian Handicap Over/Under probabilities and settlement scenarios:
-    Lines: 0.25, 0.75, 1.25, 1.75, 2.25, 2.75, 3.25, 3.75, 4.25, 4.75, 5.25, 5.75
+    Computes Asian Handicap Over/Under probabilities for both:
+    1. Single Bet Confidence (Pure Win Score)
+    2. Mix Parlay Safety Index (Anti-Gugur Survival Rate = 100% - P(Loss Full))
     """
     if isinstance(pmf_or_lambda, list):
         pmf = pmf_or_lambda
@@ -106,6 +107,12 @@ def calculate_asian_over_under_prob(line: float, pmf_or_lambda: Any) -> Dict[str
 
     if is_over:
         pick = f"OVER {line_str}"
+        # Single Bet confidence
+        single_conf_pct = int(round((p_over_win_full + 0.5 * p_over_win_half) * 100))
+        # Parlay Safety Rate: 100% - Loss Full
+        parlay_safety_pct = int(round((p_over_win_full + p_over_win_half + p_over_loss_half) * 100))
+        parlay_loss_pct = round(p_over_loss_full * 100, 1)
+
         if p_over_win_full >= 0.50:
             outcome_text = "Menang Penuh"
         elif p_over_win_half >= 0.25:
@@ -114,9 +121,14 @@ def calculate_asian_over_under_prob(line: float, pmf_or_lambda: Any) -> Dict[str
             outcome_text = "Potensi Kalah Setengah"
         else:
             outcome_text = "Menang Penuh"
-        conf_pct = int(round((p_over_win_full + 0.5 * p_over_win_half) * 100))
     else:
         pick = f"UNDER {line_str}"
+        # Single Bet confidence
+        single_conf_pct = int(round((p_under_win_full + 0.5 * p_under_win_half) * 100))
+        # Parlay Safety Rate: 100% - Loss Full
+        parlay_safety_pct = int(round((p_under_win_full + p_under_win_half + p_under_loss_half) * 100))
+        parlay_loss_pct = round(p_under_loss_full * 100, 1)
+
         if p_under_win_full >= 0.50:
             outcome_text = "Menang Penuh"
         elif p_under_win_half >= 0.25:
@@ -125,17 +137,21 @@ def calculate_asian_over_under_prob(line: float, pmf_or_lambda: Any) -> Dict[str
             outcome_text = "Potensi Kalah Setengah"
         else:
             outcome_text = "Menang Penuh"
-        conf_pct = int(round((p_under_win_full + 0.5 * p_under_win_half) * 100))
 
-    conf_pct = max(51, min(99, conf_pct))
+    single_conf_pct = max(51, min(99, single_conf_pct))
+    parlay_safety_pct = max(51, min(99, parlay_safety_pct))
 
     return {
         "line": line_str,
         "pick": pick,
         "is_over": is_over,
-        "conf_pct": conf_pct,
+        "conf_pct": single_conf_pct,
+        "single_conf_pct": single_conf_pct,
+        "parlay_safety_pct": parlay_safety_pct,
+        "parlay_loss_pct": parlay_loss_pct,
         "outcome_text": outcome_text,
-        "is_high_conf": conf_pct >= 85,
+        "is_high_conf": single_conf_pct >= 85,
+        "is_parlay_safe": parlay_safety_pct >= 85,
         "probs": {
             "over_win_full": round(p_over_win_full * 100, 1),
             "over_win_half": round(p_over_win_half * 100, 1),
@@ -250,6 +266,7 @@ def calculate_statistical_prediction(
     ht_high_prob = [p for p in ht_picks_list if p["conf_pct"] >= 85]
     ht_high_over = [p for p in ht_high_prob if p["is_over"]]
     ht_high_under = [p for p in ht_high_prob if not p["is_over"]]
+    ht_parlay_safe = [p for p in sorted(ht_picks_list, key=lambda x: x["parlay_safety_pct"], reverse=True) if p["parlay_safety_pct"] >= 85]
 
     # 2. BABAK 2 (2HT) - Pure Asian Lines
     sh_asian_lines = [0.25, 0.75, 1.25, 1.75, 2.25, 2.75, 3.25, 3.75, 4.25]
@@ -275,6 +292,7 @@ def calculate_statistical_prediction(
     sh_high_prob = [p for p in sh_picks_list if p["conf_pct"] >= 85]
     sh_high_over = [p for p in sh_high_prob if p["is_over"]]
     sh_high_under = [p for p in sh_high_prob if not p["is_over"]]
+    sh_parlay_safe = [p for p in sorted(sh_picks_list, key=lambda x: x["parlay_safety_pct"], reverse=True) if p["parlay_safety_pct"] >= 85]
 
     # 3. FULL TIME (FT) - Pure Asian Lines (0.25 to 5.75)
     ft_asian_lines = [0.25, 0.75, 1.25, 1.75, 2.25, 2.75, 3.25, 3.75, 4.25, 4.75, 5.25, 5.75]
@@ -300,6 +318,7 @@ def calculate_statistical_prediction(
     ft_high_prob = [p for p in ft_picks_list if p["conf_pct"] >= 85]
     ft_high_over = [p for p in ft_high_prob if p["is_over"]]
     ft_high_under = [p for p in ft_high_prob if not p["is_over"]]
+    ft_parlay_safe = [p for p in sorted(ft_picks_list, key=lambda x: x["parlay_safety_pct"], reverse=True) if p["parlay_safety_pct"] >= 85]
 
     # Overall high-confidence list across all periods
     all_high_confidence = (
@@ -315,17 +334,17 @@ def calculate_statistical_prediction(
     reasons = {
         "ht": (
             f"Babak 1 (HT): Ekspektasi gol gabungan terkalibrasi Dixon-Coles adalah {lam_tot_ht}. "
-            f"Terdeteksi {len(ht_high_over)} opsi OVER dan {len(ht_high_under)} opsi UNDER dengan probabilitas kuat (≥ 85%). "
+            f"Terdeteksi {len(ht_high_over)} opsi OVER, {len(ht_high_under)} opsi UNDER, dan {len(ht_parlay_safe)} opsi Aman Parley (Anti-Gugur ≥ 85%). "
             f"Efisiensi serangan {team1_name} ({t1_desc_eff}) dan {team2_name} ({t2_desc_eff}) membentuk pola babak 1."
         ),
         "2ht": (
             f"Babak 2 (2HT): Ekspektasi gol babak kedua berada di {lam_tot_2h}. "
-            f"Terdapat {len(sh_high_over)} opsi OVER dan {len(sh_high_under)} opsi UNDER berpeluang tinggi (≥ 85%). "
+            f"Terdapat {len(sh_high_over)} opsi OVER, {len(sh_high_under)} opsi UNDER, dan {len(sh_parlay_safe)} opsi Aman Parley (Anti-Gugur ≥ 85%). "
             f"Intensitas paruh kedua lebih terbuka seiring dinamika kelelahan fisik pemain."
         ),
         "ft": (
             f"Full Time (FT): Agregat 90 menit menghasilkan total ekspektasi {lam_tot_ft} gol (xG {round(t1_v_xg_ft + t2_v_xg_ft, 2)} | Est. SoT {round(t1_sot_ft + t2_sot_ft, 1)}). "
-            f"Tercatat {len(ft_high_over)} opsi OVER dan {len(ft_high_under)} opsi UNDER berkualitas tinggi dengan probabilitas di atas 85%."
+            f"Tercatat {len(ft_high_over)} opsi OVER, {len(ft_high_under)} opsi UNDER, dan {len(ft_parlay_safe)} opsi Garansi Keselamatan Parley (Anti-Gugur ≥ 85%)."
         )
     }
 
@@ -346,6 +365,7 @@ def calculate_statistical_prediction(
                 "high_prob": ht_high_prob,
                 "high_over": ht_high_over,
                 "high_under": ht_high_under,
+                "parlay_safe": ht_parlay_safe,
                 "match_075": next((p for p in ht_picks_list if "Total Laga > 0.75" in p["label"]), ht_picks_list[0]),
                 "match_125": next((p for p in ht_picks_list if "Total Laga > 1.25" in p["label"]), ht_picks_list[0])
             },
@@ -354,6 +374,7 @@ def calculate_statistical_prediction(
                 "high_prob": sh_high_prob,
                 "high_over": sh_high_over,
                 "high_under": sh_high_under,
+                "parlay_safe": sh_parlay_safe,
                 "match_075": next((p for p in sh_picks_list if "Total Laga > 0.75" in p["label"]), sh_picks_list[0]),
                 "match_125": next((p for p in sh_picks_list if "Total Laga > 1.25" in p["label"]), sh_picks_list[0])
             },
@@ -362,6 +383,7 @@ def calculate_statistical_prediction(
                 "high_prob": ft_high_prob,
                 "high_over": ft_high_over,
                 "high_under": ft_high_under,
+                "parlay_safe": ft_parlay_safe,
                 "match_175": next((p for p in ft_picks_list if "Total Laga > 1.75" in p["label"]), ft_picks_list[0]),
                 "match_225": next((p for p in ft_picks_list if "Total Laga > 2.25" in p["label"]), ft_picks_list[0]),
                 "match_275": next((p for p in ft_picks_list if "Total Laga > 2.75" in p["label"]), ft_picks_list[0]),
