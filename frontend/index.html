@@ -258,55 +258,62 @@
             </table>
         </section>
 
-        <!-- PREDICTION SECTION (AI & Statistical Intelligence Engine) -->
-        <section class="prediction-card" id="predictionSection">
-            <div class="prediction-header">
-                <div class="prediction-title-group">
-                    <div class="title-with-badge">
-                        <i class="fa-solid fa-microchip ai-icon"></i>
-                        <h2>PREDIKSI OVER / UNDER STATISTIK</h2>
-                        <span class="badge-model">Dixon-Coles & Shot Efficiency Model</span>
-                        <span class="badge-match-active" id="predActiveMatchBadge">Basis: Last 10 Matches</span>
+        <!-- PREDICTION SECTION (Sofascore-style Sports Intelligence Engine) -->
+        <section class="prediction-card sofa-pred-section" id="predictionSection">
+            <!-- Top Controls Header -->
+            <div class="sofa-header-main">
+                <div class="sofa-title-col">
+                    <div class="sofa-title-wrap">
+                        <i class="fa-solid fa-chart-line-up sofa-ai-icon"></i>
+                        <h2 class="sofa-title">PREDIKSI PASARAN ASIA</h2>
+                        <span class="sofa-chip-model"><i class="fa-solid fa-bolt"></i> Dixon-Coles Model</span>
+                        <span class="sofa-chip-match" id="predActiveMatchBadge">Last 10 Matches</span>
                     </div>
-                    <p class="prediction-subtitle" id="predictionSubtitle">Perhitungan probabilitas matematis Pasaran Asia: Single Bet Win Rate & Mix Parlay Safety Index (Anti-Kalah Penuh) untuk Babak 1 (HT), Babak 2 (2HT), dan Full Time (FT).</p>
+                    <p class="sofa-subtitle" id="predictionSubtitle">Probabilitas kuantitatif pasaran Asia untuk Single Bet & Proteksi Anti-Gugur Mix Parlay.</p>
                 </div>
 
-                <div class="prediction-actions-group" style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
-                    <!-- Betting Mode Selector (Single Bet vs Mix Parlay) -->
-                    <div class="bet-mode-toggle" id="betModeToggle" style="display: flex; gap: 4px; background: #0c202d; padding: 4px; border-radius: 6px; border: 1px solid rgba(56, 189, 248, 0.4);">
-                        <button class="bet-mode-btn active" data-mode="single" style="background: var(--btn-active); border: 1px solid var(--accent-cyan); color: #fff; padding: 6px 12px; border-radius: 4px; font-size: 0.78rem; font-weight: 800; cursor: pointer;">
+                <!-- Segmented Control Bar -->
+                <div class="sofa-controls-group">
+                    <!-- Betting Mode Switch -->
+                    <div class="sofa-segmented-control" id="betModeToggle">
+                        <button class="sofa-segment-btn active" data-mode="single">
                             <i class="fa-solid fa-bullseye"></i> Single Bet
                         </button>
-                        <button class="bet-mode-btn" data-mode="parlay" style="background: transparent; border: 1px solid transparent; color: var(--text-secondary); padding: 6px 12px; border-radius: 4px; font-size: 0.78rem; font-weight: 800; cursor: pointer;">
-                            <i class="fa-solid fa-shield-halved" style="color: #38bdf8;"></i> Mix Parlay (Anti-Gugur)
+                        <button class="sofa-segment-btn" data-mode="parlay">
+                            <i class="fa-solid fa-shield-halved"></i> Mix Parlay
                         </button>
                     </div>
 
-                    <!-- Confidence & Direction Filter Toggle -->
-                    <div class="conf-toggle" id="confToggle" style="display: flex; gap: 4px; background: #091a26; padding: 4px; border-radius: 6px; border: 1px solid var(--border-color);">
-                        <button class="conf-btn active" data-filter="high" style="background: var(--btn-active); border: 1px solid var(--accent-cyan); color: #fff; padding: 6px 10px; border-radius: 4px; font-size: 0.78rem; font-weight: 700; cursor: pointer;">
-                            <i class="fa-solid fa-fire" style="color: #fbbf24;"></i> Semua (≥85%)
+                    <!-- Scenario Switch -->
+                    <div class="sofa-segmented-control" id="scenarioToggle">
+                        <button class="sofa-segment-btn active" data-scenario="venue">
+                            <i class="fa-solid fa-house-chimney"></i> Kandang / Tandang
                         </button>
-                        <button class="conf-btn" data-filter="over" style="background: transparent; border: 1px solid transparent; color: var(--text-secondary); padding: 6px 10px; border-radius: 4px; font-size: 0.78rem; font-weight: 700; cursor: pointer;">
-                            <span style="color: #22c55e;">●</span> Khusus OVER
-                        </button>
-                        <button class="conf-btn" data-filter="under" style="background: transparent; border: 1px solid transparent; color: var(--text-secondary); padding: 6px 10px; border-radius: 4px; font-size: 0.78rem; font-weight: 700; cursor: pointer;">
-                            <span style="color: #ef4444;">●</span> Khusus UNDER
-                        </button>
-                        <button class="conf-btn" data-filter="all" style="background: transparent; border: 1px solid transparent; color: var(--text-secondary); padding: 6px 10px; border-radius: 4px; font-size: 0.78rem; font-weight: 700; cursor: pointer;">
-                            <i class="fa-solid fa-list-check"></i> Semua Pasaran
+                        <button class="sofa-segment-btn" data-scenario="overall">
+                            <i class="fa-solid fa-ranking-star"></i> Overall & Klasemen
                         </button>
                     </div>
+                </div>
+            </div>
 
-                    <!-- Scenario Mode Selector (Venue Specific vs Overall + Standings) -->
-                    <div class="scenario-toggle" id="scenarioToggle">
-                        <button class="scenario-btn active" data-scenario="venue">
-                            <i class="fa-solid fa-house-chimney"></i> Kandang vs Tandang
-                        </button>
-                        <button class="scenario-btn" data-scenario="overall">
-                            <i class="fa-solid fa-ranking-star"></i> Performa Overall & Klasemen
-                        </button>
-                    </div>
+            <!-- Quick Filter Ribbon -->
+            <div class="sofa-filter-ribbon" id="confToggle">
+                <div class="sofa-chips-list">
+                    <button class="sofa-filter-chip active" data-filter="high">
+                        <i class="fa-solid fa-fire text-amber"></i> Top Peluang (≥85%)
+                    </button>
+                    <button class="sofa-filter-chip" data-filter="over">
+                        <span class="dot-indicator dot-over"></span> Khusus OVER
+                    </button>
+                    <button class="sofa-filter-chip" data-filter="under">
+                        <span class="dot-indicator dot-under"></span> Khusus UNDER
+                    </button>
+                    <button class="sofa-filter-chip" data-filter="all">
+                        <i class="fa-solid fa-list-ul"></i> Semua Garis Pasaran
+                    </button>
+                </div>
+                <div class="sofa-ribbon-tip" id="sofaRibbonTip">
+                    <i class="fa-solid fa-circle-info"></i> <span>Tips: Mode Mix Parlay melindungi akumulasi tiket saat Menang/Kalah Setengah.</span>
                 </div>
             </div>
 

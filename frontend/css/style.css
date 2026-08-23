@@ -421,112 +421,207 @@ body.matrix-theme {
 /* =========================================================
    PREDICTION SECTION STYLING (AI & STATISTICAL INTELLIGENCE)
    ========================================================= */
-.prediction-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 20px;
+/* =========================================================
+   PREDICTION SECTION (SOFASCORE PRO SPORTS ANALYTICS STYLE)
+   ========================================================= */
+.sofa-pred-section {
+    background: #081522;
+    border: 1px solid rgba(38, 77, 107, 0.45);
+    border-radius: 12px;
+    padding: 22px;
     display: flex;
     flex-direction: column;
     gap: 18px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
 }
 
-.prediction-header {
+/* Header & Segmented Controls */
+.sofa-header-main {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
     gap: 20px;
     flex-wrap: wrap;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid rgba(30, 58, 82, 0.6);
     padding-bottom: 16px;
 }
 
-.prediction-title-group {
+.sofa-title-col {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 5px;
 }
 
-.title-with-badge {
+.sofa-title-wrap {
     display: flex;
     align-items: center;
     gap: 10px;
     flex-wrap: wrap;
 }
 
-.ai-icon {
-    font-size: 1.3rem;
+.sofa-ai-icon {
+    font-size: 1.25rem;
     color: var(--accent-cyan);
+    filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.5));
 }
 
-.title-with-badge h2 {
-    font-size: 1.15rem;
+.sofa-title {
+    font-size: 1.12rem;
     font-weight: 800;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.6px;
     color: #ffffff;
+    margin: 0;
 }
 
-.badge-model {
-    background: rgba(56, 189, 248, 0.15);
-    color: var(--accent-cyan);
-    border: 1px solid rgba(56, 189, 248, 0.35);
+.sofa-chip-model {
+    background: rgba(56, 189, 248, 0.12);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.3);
     padding: 2px 8px;
     border-radius: 4px;
     font-size: 0.72rem;
     font-weight: 700;
-    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
 }
 
-.badge-match-active {
-    background: rgba(52, 211, 153, 0.15);
-    color: var(--accent-green);
-    border: 1px solid rgba(52, 211, 153, 0.35);
+.sofa-chip-match {
+    background: rgba(34, 197, 94, 0.12);
+    color: #22c55e;
+    border: 1px solid rgba(34, 197, 94, 0.3);
     padding: 2px 8px;
     border-radius: 4px;
     font-size: 0.72rem;
     font-weight: 700;
 }
 
-.prediction-subtitle {
-    font-size: 0.84rem;
-    color: var(--text-secondary);
-    max-width: 780px;
+.sofa-subtitle {
+    font-size: 0.82rem;
+    color: #94a3b8;
     line-height: 1.4;
+    margin: 0;
 }
 
-.scenario-toggle {
+.sofa-controls-group {
     display: flex;
-    gap: 8px;
-    background: #091a26;
-    padding: 4px;
-    border-radius: 6px;
-    border: 1px solid var(--border-color);
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
-.scenario-btn {
+/* iOS/Sofascore Segmented Switch */
+.sofa-segmented-control {
+    display: flex;
+    background: #040c14;
+    padding: 3px;
+    border-radius: 8px;
+    border: 1px solid rgba(30, 58, 82, 0.8);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.sofa-segment-btn {
     background: transparent;
-    border: 1px solid transparent;
-    color: var(--text-secondary);
+    border: none;
+    color: #94a3b8;
     padding: 6px 14px;
-    border-radius: 4px;
-    font-size: 0.8rem;
+    border-radius: 6px;
+    font-size: 0.78rem;
     font-weight: 700;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 6px;
-    transition: all 0.2s;
-}
-.scenario-btn:hover {
-    color: #ffffff;
-}
-.scenario-btn.active {
-    background: var(--btn-active);
-    color: #ffffff;
-    border-color: var(--accent-cyan);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 3-Column Grid (HT, 2HT, FT) */
+.sofa-segment-btn:hover {
+    color: #ffffff;
+}
+
+.sofa-segment-btn.active {
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(2, 132, 199, 0.4);
+}
+
+/* Quick Filter Ribbon */
+.sofa-filter-ribbon {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: #06111b;
+    border: 1px solid rgba(30, 58, 82, 0.5);
+    border-radius: 8px;
+    padding: 6px 12px;
+    flex-wrap: wrap;
+}
+
+.sofa-chips-list {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.sofa-filter-chip {
+    background: transparent;
+    border: 1px solid transparent;
+    color: #94a3b8;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s ease;
+}
+
+.sofa-filter-chip:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #f1f5f9;
+}
+
+.sofa-filter-chip.active {
+    background: #0e2b40;
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.dot-indicator {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    display: inline-block;
+}
+.dot-over {
+    background: #22c55e;
+    box-shadow: 0 0 6px rgba(34, 197, 94, 0.7);
+}
+.dot-under {
+    background: #ef4444;
+    box-shadow: 0 0 6px rgba(239, 68, 68, 0.7);
+}
+.text-amber {
+    color: #fbbf24;
+}
+
+.sofa-ribbon-tip {
+    font-size: 0.75rem;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.sofa-ribbon-tip i {
+    color: #38bdf8;
+}
+
+/* 3-Column Grid */
 .prediction-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -534,9 +629,9 @@ body.matrix-theme {
 }
 
 .pred-period-card {
-    background: var(--bg-card-sub);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
+    background: #0a1826;
+    border: 1px solid rgba(30, 58, 82, 0.6);
+    border-radius: 10px;
     padding: 16px;
     display: flex;
     flex-direction: column;
@@ -547,7 +642,7 @@ body.matrix-theme {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid rgba(26, 60, 86, 0.6);
+    border-bottom: 1px solid rgba(30, 58, 82, 0.5);
     padding-bottom: 10px;
 }
 
@@ -558,72 +653,24 @@ body.matrix-theme {
     display: flex;
     align-items: center;
     gap: 6px;
+    letter-spacing: 0.3px;
 }
 
 .period-badge {
     font-family: var(--font-mono);
-    font-size: 0.76rem;
+    font-size: 0.75rem;
     font-weight: 700;
-    color: var(--accent-cyan);
-    background: rgba(56, 189, 248, 0.12);
-    padding: 2px 6px;
-    border-radius: 4px;
-}
-
-.pick-item {
-    background: #0d2130;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    padding: 9px 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    font-size: 0.82rem;
-    transition: all 0.2s ease;
-}
-
-.pick-item.high-conf {
-    border: 1px solid rgba(34, 197, 94, 0.45);
-    background: linear-gradient(135deg, rgba(34, 197, 94, 0.08) 0%, #0d2130 100%);
-    border-left: 3px solid #22c55e;
-}
-
-.pick-item.parlay-safe {
-    border: 1px solid rgba(56, 189, 248, 0.45);
-    background: linear-gradient(135deg, rgba(56, 189, 248, 0.09) 0%, #0d2130 100%);
-    border-left: 3px solid #38bdf8;
-}
-
-.badge-high-conf-tag {
-    background: rgba(34, 197, 94, 0.2);
-    color: #22c55e;
-    border: 1px solid rgba(34, 197, 94, 0.4);
-    padding: 1px 6px;
-    border-radius: 3px;
-    font-size: 0.68rem;
-    font-weight: 800;
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-}
-
-.badge-parlay-tag {
-    background: rgba(56, 189, 248, 0.2);
     color: #38bdf8;
-    border: 1px solid rgba(56, 189, 248, 0.45);
-    padding: 1px 6px;
-    border-radius: 3px;
-    font-size: 0.68rem;
-    font-weight: 800;
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    padding: 3px 8px;
+    border-radius: 4px;
 }
 
 .pred-picks-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 9px;
     max-height: 480px;
     overflow-y: auto;
     padding-right: 4px;
@@ -632,100 +679,142 @@ body.matrix-theme {
     width: 4px;
 }
 .pred-picks-list::-webkit-scrollbar-thumb {
-    background: var(--border-color);
+    background: rgba(56, 189, 248, 0.2);
     border-radius: 2px;
 }
 
-.pred-filter-bar {
+/* =========================================================
+   SOFASCORE MATCH PICK ITEM CARD
+   ========================================================= */
+.sofa-pick-card {
+    background: #0d2132;
+    border: 1px solid rgba(30, 64, 92, 0.6);
+    border-radius: 8px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sofa-pick-card:hover {
+    background: #11293e;
+    border-color: rgba(56, 189, 248, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+}
+
+.sofa-pick-card.high-conf {
+    border-left: 3px solid #22c55e;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.07) 0%, #0d2132 100%);
+}
+
+.sofa-pick-card.parlay-safe {
+    border-left: 3px solid #38bdf8;
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.08) 0%, #0d2132 100%);
+}
+
+/* Card Top Row */
+.sofa-pick-top {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
-    padding: 6px 10px;
-    background: #091a26;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    margin-bottom: 8px;
+    gap: 8px;
 }
 
-.pred-filter-btn {
-    background: transparent;
-    border: 1px solid transparent;
-    color: var(--text-secondary);
-    padding: 4px 10px;
-    border-radius: 4px;
-    font-size: 0.74rem;
+.sofa-market-name {
+    font-size: 0.84rem;
     font-weight: 700;
-    cursor: pointer;
-    transition: all 0.15s;
-}
-.pred-filter-btn.active {
-    background: var(--btn-active);
-    color: #ffffff;
-    border-color: var(--accent-cyan);
+    color: #f1f5f9;
+    letter-spacing: 0.2px;
 }
 
-.pick-main-row {
+.sofa-metric-badge {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    align-items: baseline;
+    gap: 4px;
 }
 
-.pick-label {
-    color: var(--text-secondary);
+.sofa-pct-value {
+    font-family: var(--font-mono);
+    font-size: 0.96rem;
+    font-weight: 800;
+    color: #22c55e;
+}
+.sofa-pick-card.parlay-safe .sofa-pct-value {
+    color: #38bdf8;
+}
+
+.sofa-pct-sub {
+    font-size: 0.68rem;
+    color: #64748b;
     font-weight: 600;
 }
 
-.pick-result-badge {
+/* Card Bottom Row */
+.sofa-pick-bottom {
     display: flex;
     align-items: center;
-    gap: 6px;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.sofa-action-pill {
+    padding: 3px 9px;
+    border-radius: 4px;
+    font-size: 0.76rem;
     font-weight: 800;
+    letter-spacing: 0.4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
 }
 
 .badge-pill-over {
-    background: rgba(34, 197, 94, 0.2);
+    background: rgba(34, 197, 94, 0.16);
     color: #22c55e;
-    border: 1px solid rgba(34, 197, 94, 0.4);
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-size: 0.78rem;
+    border: 1px solid rgba(34, 197, 94, 0.45);
 }
 
 .badge-pill-under {
-    background: rgba(239, 68, 68, 0.2);
+    background: rgba(239, 68, 68, 0.16);
     color: #ef4444;
-    border: 1px solid rgba(239, 68, 68, 0.4);
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-size: 0.78rem;
-}
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-size: 0.78rem;
+    border: 1px solid rgba(239, 68, 68, 0.45);
 }
 
-.pick-conf {
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    color: var(--text-dim);
-}
-
-.pick-sub-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 0.72rem;
-    color: var(--accent-gold);
+.sofa-status-text {
+    font-size: 0.73rem;
     font-weight: 600;
-    padding-top: 2px;
+    color: #94a3b8;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
 }
 
-.scenario-tag {
-    background: rgba(251, 191, 36, 0.12);
-    padding: 2px 6px;
-    border-radius: 3px;
-    border: 1px solid rgba(251, 191, 36, 0.3);
+.sofa-status-text.parlay-shield {
+    color: #38bdf8;
+}
+
+/* Micro Progress Bar */
+.sofa-micro-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2.5px;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.sofa-micro-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981 0%, #22c55e 100%);
+    transition: width 0.4s ease;
+}
+
+.sofa-pick-card.parlay-safe .sofa-micro-fill {
+    background: linear-gradient(90deg, #0284c7 0%, #38bdf8 100%);
 }
 
 /* Reasoning Box */

@@ -130,9 +130,9 @@ function initTeamDropdowns() {
     s2.addEventListener('change', updateMatrix);
 }
 
-// 6. Scenario Toggle for Predictions
+// 6. Scenario Toggle for Predictions (Sofascore Segmented Switch)
 function initScenarioToggle() {
-    const sBtns = document.querySelectorAll('#scenarioToggle .scenario-btn');
+    const sBtns = document.querySelectorAll('#scenarioToggle .sofa-segment-btn');
     sBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             sBtns.forEach(b => b.classList.remove('active'));
@@ -143,53 +143,37 @@ function initScenarioToggle() {
     });
 }
 
-// 7. Confidence Filter Toggle (>= 85% vs All)
+// 7. Quick Filter Chips (Top >=85%, Over, Under, All)
 function initConfToggle() {
-    const cBtns = document.querySelectorAll('#confToggle .conf-btn');
+    const cBtns = document.querySelectorAll('#confToggle .sofa-filter-chip');
     cBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-            cBtns.forEach(b => {
-                b.classList.remove('active');
-                b.style.background = 'transparent';
-                b.style.borderColor = 'transparent';
-                b.style.color = 'var(--text-secondary)';
-            });
+            cBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            btn.style.background = 'var(--btn-active)';
-            btn.style.borderColor = 'var(--accent-cyan)';
-            btn.style.color = '#ffffff';
-
             currentConfFilter = btn.getAttribute('data-filter');
             renderPredictions();
         });
     });
 }
 
-// 8. Bet Mode Toggle (Single Bet vs Mix Parlay Safety)
+// 8. Bet Mode Toggle (Single Bet vs Mix Parlay)
 function initBetModeToggle() {
-    const bBtns = document.querySelectorAll('#betModeToggle .bet-mode-btn');
+    const bBtns = document.querySelectorAll('#betModeToggle .sofa-segment-btn');
     bBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-            bBtns.forEach(b => {
-                b.classList.remove('active');
-                b.style.background = 'transparent';
-                b.style.borderColor = 'transparent';
-                b.style.color = 'var(--text-secondary)';
-            });
+            bBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            btn.style.background = 'var(--btn-active)';
-            btn.style.borderColor = 'var(--accent-cyan)';
-            btn.style.color = '#ffffff';
-
             currentBetMode = btn.getAttribute('data-mode');
-            const sub = document.getElementById('predictionSubtitle');
-            if (sub) {
+
+            const tip = document.getElementById('sofaRibbonTip');
+            if (tip) {
                 if (currentBetMode === 'parlay') {
-                    sub.innerHTML = `🛡️ <strong>Mode Mix Parlay (Anti-Gugur Aktif)</strong>: Menghitung persentase kelangsungan tiket parley (100% - Resiko Kalah Penuh). Menang Setengah atau Kalah Setengah tidak menggagalkan akumulasi tiket!`;
+                    tip.innerHTML = `<i class="fa-solid fa-shield-halved" style="color: #38bdf8;"></i> <span><strong>Mode Mix Parlay</strong>: Menampilkan % kelangsungan tiket. Menang/Kalah Setengah tidak mematikan parlay!</span>`;
                 } else {
-                    sub.innerHTML = `🎯 <strong>Mode Single Bet (Win Rate Aktif)</strong>: Perhitungan probabilitas kemenangan murni Pasaran Asia untuk Babak 1 (HT), Babak 2 (2HT), dan Full Time (FT).`;
+                    tip.innerHTML = `<i class="fa-solid fa-circle-info" style="color: #22c55e;"></i> <span><strong>Mode Single Bet</strong>: Menampilkan probabilitas kemenangan murni Pasaran Asia.</span>`;
                 }
             }
+
             renderPredictions();
         });
     });
@@ -325,55 +309,47 @@ function formatCell(val, isAsian) {
     return val;
 }
 
-// Render Prediction Cards with Support for Single Bet & Mix Parlay Modes
+// Render Prediction Cards with Sofascore Pro Sports Layout
 function renderPredictions() {
     if (!predictionData) return;
 
     const predObj = currentScenario === 'venue' ? predictionData.venue_prediction : predictionData.overall_prediction;
-    const team1 = predictionData.team1.name;
-    const team2 = predictionData.team2.name;
 
     function createPickItemHTML(pickData) {
         const isParlayMode = currentBetMode === 'parlay';
         const confValue = isParlayMode ? pickData.parlay_safety_pct : pickData.single_conf_pct;
         const isHigh = confValue >= 85;
 
-        let badgeTag = '';
-        if (isParlayMode) {
-            badgeTag = isHigh ? `<span class="badge-parlay-tag"><i class="fa-solid fa-shield-halved"></i> Anti-Gugur ${confValue}%</span>` : '';
-        } else {
-            badgeTag = isHigh ? `<span class="badge-high-conf-tag"><i class="fa-solid fa-fire"></i> ≥85%</span>` : '';
-        }
+        const actionClass = pickData.is_over ? 'badge-pill-over' : 'badge-pill-under';
+        const cardStateClass = isParlayMode ? (isHigh ? 'parlay-safe' : '') : (isHigh ? 'high-conf' : '');
 
-        let subRowHTML = '';
+        let statusHTML = '';
         if (isParlayMode) {
-            subRowHTML = `
-                <div class="pick-sub-row" style="display: flex; justify-content: space-between; align-items: center; font-size: 0.74rem;">
-                    <span class="scenario-tag" style="color: #38bdf8;"><i class="fa-solid fa-shield"></i> Aman Parley (Resiko Gugur: ${pickData.parlay_loss_pct}%)</span>
-                    <span style="color: var(--text-dim);">${pickData.outcome_text}</span>
-                </div>
-            `;
+            statusHTML = `<span class="sofa-status-text parlay-shield"><i class="fa-solid fa-shield-halved"></i> Resiko Gugur: ${pickData.parlay_loss_pct}%</span>`;
         } else {
-            subRowHTML = `
-                <div class="pick-sub-row">
-                    <span class="scenario-tag"><i class="fa-solid fa-shield-halved"></i> ${pickData.outcome_text}</span>
-                </div>
-            `;
+            let statusIcon = 'fa-circle-check';
+            if (pickData.outcome_text === 'Menang Setengah') statusIcon = 'fa-star-half-stroke';
+            else if (pickData.outcome_text.includes('Kalah')) statusIcon = 'fa-triangle-exclamation';
+
+            statusHTML = `<span class="sofa-status-text"><i class="fa-solid ${statusIcon}"></i> ${pickData.outcome_text}</span>`;
         }
 
         return `
-            <div class="pick-item ${isParlayMode ? (isHigh ? 'parlay-safe' : '') : (isHigh ? 'high-conf' : '')}">
-                <div class="pick-main-row">
-                    <span class="pick-label">
-                        ${pickData.label}
-                        ${badgeTag}
-                    </span>
-                    <div class="pick-result-badge">
-                        <span class="${pickData.is_over ? 'badge-pill-over' : 'badge-pill-under'}">${pickData.pick}</span>
-                        <span class="pick-conf" style="font-weight: 700; ${isParlayMode ? 'color: #38bdf8;' : (isHigh ? 'color: #22c55e;' : '')}">${confValue}% ${isParlayMode ? '<span style="font-size: 0.7rem; font-weight: normal; color: var(--text-secondary);">Aman</span>' : ''}</span>
+            <div class="sofa-pick-card ${cardStateClass}">
+                <div class="sofa-pick-top">
+                    <span class="sofa-market-name">${pickData.label}</span>
+                    <div class="sofa-metric-badge">
+                        <span class="sofa-pct-value">${confValue}%</span>
+                        <span class="sofa-pct-sub">${isParlayMode ? 'Aman' : 'Peluang'}</span>
                     </div>
                 </div>
-                ${subRowHTML}
+                <div class="sofa-pick-bottom">
+                    <span class="sofa-action-pill ${actionClass}">${pickData.pick}</span>
+                    ${statusHTML}
+                </div>
+                <div class="sofa-micro-bar">
+                    <div class="sofa-micro-fill" style="width: ${Math.min(100, Math.max(10, confValue))}%;"></div>
+                </div>
             </div>
         `;
     }
@@ -412,7 +388,7 @@ function renderPredictions() {
 
         if (displayPicks.length === 0) {
             const filterName = currentConfFilter === 'over' ? 'OVER' : (currentConfFilter === 'under' ? 'UNDER' : '');
-            container.innerHTML = `<div style="color: var(--text-dim); font-size: 0.8rem; text-align: center; padding: 16px;">Tidak ada opsi ${filterName} di atas 85% untuk babak ini.</div>`;
+            container.innerHTML = `<div style="color: #64748b; font-size: 0.8rem; text-align: center; padding: 20px;">Tidak ada opsi ${filterName} di atas 85% untuk babak ini.</div>`;
             return;
         }
 
@@ -443,6 +419,7 @@ function renderPredictions() {
     renderList('ftPicksList', ftP.all_picks, ftP.high_prob, ftP.high_over, ftP.high_under, ftP.parlay_safe);
     document.getElementById('ftReasoningText').textContent = predObj.reasoning.ft;
 }
+
 
 
 
