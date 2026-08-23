@@ -271,14 +271,26 @@
                     <p class="prediction-subtitle">Perhitungan probabilitas matematis Over/Under (Menang Penuh, Menang Setengah, Kalah Setengah, Seri/Dana Kembali, Kalah Penuh) untuk Babak 1 (HT), Babak 2 (2HT), dan Full Time (FT).</p>
                 </div>
 
-                <!-- Scenario Mode Selector (Venue Specific vs Overall + Standings) -->
-                <div class="scenario-toggle" id="scenarioToggle">
-                    <button class="scenario-btn active" data-scenario="venue">
-                        <i class="fa-solid fa-house-chimney"></i> Kandang vs Tandang
-                    </button>
-                    <button class="scenario-btn" data-scenario="overall">
-                        <i class="fa-solid fa-ranking-star"></i> Performa Overall & Klasemen
-                    </button>
+                <div class="prediction-actions-group" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <!-- Confidence Filter Toggle (>= 85% vs All) -->
+                    <div class="conf-toggle" id="confToggle" style="display: flex; gap: 6px; background: #091a26; padding: 4px; border-radius: 6px; border: 1px solid var(--border-color);">
+                        <button class="conf-btn active" data-filter="high" style="background: var(--btn-active); border: 1px solid var(--accent-cyan); color: #fff; padding: 6px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: 700; cursor: pointer;">
+                            <i class="fa-solid fa-fire" style="color: #fbbf24;"></i> Peluang ≥ 85%
+                        </button>
+                        <button class="conf-btn" data-filter="all" style="background: transparent; border: 1px solid transparent; color: var(--text-secondary); padding: 6px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: 700; cursor: pointer;">
+                            <i class="fa-solid fa-list-check"></i> Semua Opsi
+                        </button>
+                    </div>
+
+                    <!-- Scenario Mode Selector (Venue Specific vs Overall + Standings) -->
+                    <div class="scenario-toggle" id="scenarioToggle">
+                        <button class="scenario-btn active" data-scenario="venue">
+                            <i class="fa-solid fa-house-chimney"></i> Kandang vs Tandang
+                        </button>
+                        <button class="scenario-btn" data-scenario="overall">
+                            <i class="fa-solid fa-ranking-star"></i> Performa Overall & Klasemen
+                        </button>
+                    </div>
                 </div>
             </div>
 

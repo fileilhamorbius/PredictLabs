@@ -39,7 +39,6 @@ def calculate_dixon_coles_total_pmf(lambda_h: float, lambda_a: float, max_goals:
                 joint_p = tau * p_h[x] * p_a[y]
                 total_pmf[x + y] += joint_p
 
-    # Normalize PMF so sum equals exactly 1.0
     s = sum(total_pmf)
     if s > 0:
         total_pmf = [p / s for p in total_pmf]
@@ -50,11 +49,9 @@ def calculate_asian_over_under_prob(line: float, pmf_or_lambda: Any) -> Dict[str
     """
     Computes Asian Handicap Over/Under probabilities and settlement scenarios:
     Lines: 0.25, 0.75, 1.25, 1.75, 2.25, 2.75, 3.25, 3.75, 4.25, 4.75, 5.25, 5.75
-    Accepts either an explicit PMF distribution list or a scalar lambda float.
     """
     if isinstance(pmf_or_lambda, list):
         pmf = pmf_or_lambda
-        # ensure length at least 16
         if len(pmf) < 16:
             pmf = pmf + [0.0] * (16 - len(pmf))
     else:
@@ -134,6 +131,7 @@ def calculate_asian_over_under_prob(line: float, pmf_or_lambda: Any) -> Dict[str
         "is_over": is_over,
         "conf_pct": conf_pct,
         "outcome_text": outcome_text,
+        "is_high_conf": conf_pct >= 85,
         "probs": {
             "over_win_full": round(p_over_win_full * 100, 1),
             "over_win_half": round(p_over_win_half * 100, 1),
@@ -156,12 +154,6 @@ def calculate_statistical_prediction(
     team1_rank: int = 1,
     team2_rank: int = 2
 ) -> Dict[str, Any]:
-    """
-    Advanced Quantitative Asian Handicap Goal Line Predictor:
-    1. Dixon-Coles Bivariate Adjustment (rho=-0.12) for low-score correlation (0-0, 1-0, 0-1, 1-1).
-    2. Shots on Target (SoT) & Finishing Conversion Rate Index (Danger Attack Multiplier).
-    3. Standings rank delta regression.
-    """
     t1_v_m = team1_venue_stats.get("metrics", {})
     t2_v_m = team2_venue_stats.get("metrics", {})
 
@@ -191,21 +183,17 @@ def calculate_statistical_prediction(
     t2_v_ga_ft = t2_v_m.get("bobol", {}).get("mean", {}).get("ft", 1.7)
     t2_v_xg_ft = t2_v_m.get("xg", {}).get("mean", {}).get("ft", 1.1)
 
-    # 1. Shots on Target (SoT) & Finishing Conversion Rate Estimation
-    # Estimated SoT = xG * 2.65 + Goals * 0.45 (derived from top domestic league correlation)
+    # Shots on Target & Finishing Conversion Rate Estimation
     t1_sot_ft = round(max(2.5, (t1_v_xg_ft * 2.65) + (t1_v_gf_ft * 0.45)), 1)
     t2_sot_ft = round(max(2.0, (t2_v_xg_ft * 2.65) + (t2_v_gf_ft * 0.45)), 1)
 
-    # Conversion Rate (Goals / Shots on Target)
     t1_conv_rate = round(t1_v_gf_ft / max(1.0, t1_sot_ft), 2)
     t2_conv_rate = round(t2_v_gf_ft / max(1.0, t2_sot_ft), 2)
 
-    # Attack Efficiency Multiplier: balances true shot volume vs unsustainable finishing luck
-    # Normal benchmark conversion is ~0.30 - 0.35 goals per SoT
     t1_eff_multiplier = 1.0 + min(0.12, max(-0.12, (t1_conv_rate - 0.32) * 0.35))
     t2_eff_multiplier = 1.0 + min(0.12, max(-0.12, (t2_conv_rate - 0.32) * 0.35))
 
-    # Base Expectancies (Lambda) incorporating Shot Efficiency
+    # Expectancies (Lambda)
     lam_t1_ht = max(0.15, round((0.40 * t1_v_gf_ht + 0.35 * t2_v_ga_ht + 0.25 * t1_v_xg_ht) * t1_eff_multiplier, 2))
     lam_t2_ht = max(0.10, round((0.40 * t2_v_gf_ht + 0.35 * t1_v_ga_ht + 0.25 * t2_v_xg_ht) * t2_eff_multiplier, 2))
     lam_tot_ht = round(lam_t1_ht + lam_t2_ht, 2)
@@ -217,7 +205,6 @@ def calculate_statistical_prediction(
     lam_t1_ft = max(0.35, round((0.40 * t1_v_gf_ft + 0.35 * t2_v_ga_ft + 0.25 * t1_v_xg_ft) * t1_eff_multiplier, 2))
     lam_t2_ft = max(0.25, round((0.40 * t2_v_gf_ft + 0.35 * t1_v_ga_ft + 0.25 * t2_v_xg_ft) * t2_eff_multiplier, 2))
 
-    # Standings Rank Delta Adjustment
     rank_diff = team2_rank - team1_rank
     if rank_diff != 0:
         multiplier = 1.0 + (min(10, max(-10, rank_diff)) * 0.015)
@@ -226,50 +213,105 @@ def calculate_statistical_prediction(
 
     lam_tot_ft = round(lam_t1_ft + lam_t2_ft, 2)
 
-    # 2. Dixon-Coles Bivariate Joint PMF for Exact Total Goals (rho = -0.12)
+    # Dixon-Coles Bivariate Joint PMF for Total Goals
     ht_total_pmf = calculate_dixon_coles_total_pmf(lam_t1_ht, lam_t2_ht, max_goals=12, rho=-0.12)
     sh_total_pmf = calculate_dixon_coles_total_pmf(lam_t1_2h, lam_t2_2h, max_goals=12, rho=-0.12)
     ft_total_pmf = calculate_dixon_coles_total_pmf(lam_t1_ft, lam_t2_ft, max_goals=15, rho=-0.12)
 
-    # Predictions using Dixon-Coles PMF for match totals and Poisson for individual teams
-    pred_ht_m_075 = calculate_asian_over_under_prob(0.75, ht_total_pmf)
-    pred_ht_m_125 = calculate_asian_over_under_prob(1.25, ht_total_pmf)
-    pred_ht_t1_075 = calculate_asian_over_under_prob(0.75, lam_t1_ht)
-    pred_ht_t2_075 = calculate_asian_over_under_prob(0.75, lam_t2_ht)
+    # Comprehensive Line Calculations
+    # 1. BABAK 1 (HT)
+    ht_all_lines = [0.25, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 2.25]
+    ht_picks_list = []
+    for line in [0.25, 0.75, 1.25, 1.75, 2.25]:
+        p = calculate_asian_over_under_prob(line, ht_total_pmf)
+        p["label"] = f"Total Laga > {line} HT"
+        p["category"] = "match"
+        ht_picks_list.append(p)
 
-    pred_2h_m_075 = calculate_asian_over_under_prob(0.75, sh_total_pmf)
-    pred_2h_m_125 = calculate_asian_over_under_prob(1.25, sh_total_pmf)
-    pred_2h_t1_075 = calculate_asian_over_under_prob(0.75, lam_t1_2h)
-    pred_2h_t2_075 = calculate_asian_over_under_prob(0.75, lam_t2_2h)
+    for line in [0.25, 0.75, 1.25, 1.75]:
+        p1 = calculate_asian_over_under_prob(line, lam_t1_ht)
+        p1["label"] = f"{team1_name} > {line} HT"
+        p1["category"] = "team1"
+        ht_picks_list.append(p1)
 
-    pred_ft_m_175 = calculate_asian_over_under_prob(1.75, ft_total_pmf)
-    pred_ft_m_225 = calculate_asian_over_under_prob(2.25, ft_total_pmf)
-    pred_ft_m_275 = calculate_asian_over_under_prob(2.75, ft_total_pmf)
-    pred_ft_m_325 = calculate_asian_over_under_prob(3.25, ft_total_pmf)
-    pred_ft_t1_125 = calculate_asian_over_under_prob(1.25, lam_t1_ft)
-    pred_ft_t1_175 = calculate_asian_over_under_prob(1.75, lam_t1_ft)
-    pred_ft_t2_075 = calculate_asian_over_under_prob(0.75, lam_t2_ft)
-    pred_ft_t2_125 = calculate_asian_over_under_prob(1.25, lam_t2_ft)
+        p2 = calculate_asian_over_under_prob(line, lam_t2_ht)
+        p2["label"] = f"{team2_name} > {line} HT"
+        p2["category"] = "team2"
+        ht_picks_list.append(p2)
 
-    # 3. Analytical Narrative Explanations (Indonesian)
+    # Sort HT by confidence descending
+    ht_picks_list.sort(key=lambda x: x["conf_pct"], reverse=True)
+    ht_high_prob = [p for p in ht_picks_list if p["conf_pct"] >= 85]
+
+    # 2. BABAK 2 (2HT)
+    sh_picks_list = []
+    for line in [0.25, 0.75, 1.25, 1.75, 2.25, 2.75]:
+        p = calculate_asian_over_under_prob(line, sh_total_pmf)
+        p["label"] = f"Total Laga > {line} 2HT"
+        p["category"] = "match"
+        sh_picks_list.append(p)
+
+    for line in [0.25, 0.75, 1.25, 1.75]:
+        p1 = calculate_asian_over_under_prob(line, lam_t1_2h)
+        p1["label"] = f"{team1_name} > {line} 2HT"
+        p1["category"] = "team1"
+        sh_picks_list.append(p1)
+
+        p2 = calculate_asian_over_under_prob(line, lam_t2_2h)
+        p2["label"] = f"{team2_name} > {line} 2HT"
+        p2["category"] = "team2"
+        sh_picks_list.append(p2)
+
+    sh_picks_list.sort(key=lambda x: x["conf_pct"], reverse=True)
+    sh_high_prob = [p for p in sh_picks_list if p["conf_pct"] >= 85]
+
+    # 3. FULL TIME (FT)
+    ft_picks_list = []
+    for line in [0.75, 1.25, 1.75, 2.0, 2.25, 2.5, 2.75, 3.0, 3.25, 3.75, 4.25, 4.75, 5.25]:
+        p = calculate_asian_over_under_prob(line, ft_total_pmf)
+        p["label"] = f"Total Laga > {line} FT"
+        p["category"] = "match"
+        ft_picks_list.append(p)
+
+    for line in [0.75, 1.25, 1.75, 2.25, 2.75]:
+        p1 = calculate_asian_over_under_prob(line, lam_t1_ft)
+        p1["label"] = f"{team1_name} > {line} FT"
+        p1["category"] = "team1"
+        ft_picks_list.append(p1)
+
+        p2 = calculate_asian_over_under_prob(line, lam_t2_ft)
+        p2["label"] = f"{team2_name} > {line} FT"
+        p2["category"] = "team2"
+        ft_picks_list.append(p2)
+
+    ft_picks_list.sort(key=lambda x: x["conf_pct"], reverse=True)
+    ft_high_prob = [p for p in ft_picks_list if p["conf_pct"] >= 85]
+
+    # Overall high-confidence list across all periods
+    all_high_confidence = (
+        [{"period": "HT", **p} for p in ht_high_prob] +
+        [{"period": "2HT", **p} for p in sh_high_prob] +
+        [{"period": "FT", **p} for p in ft_high_prob]
+    )
+    all_high_confidence.sort(key=lambda x: x["conf_pct"], reverse=True)
+
     t1_desc_eff = "tinggi" if t1_conv_rate >= 0.35 else ("moderat" if t1_conv_rate >= 0.25 else "rendah/boros peluang")
     t2_desc_eff = "tinggi" if t2_conv_rate >= 0.35 else ("moderat" if t2_conv_rate >= 0.25 else "rendah/boros peluang")
 
     reasons = {
         "ht": (
-            f"Babak 1 (HT): Model Dixon-Coles mengalkulasi ekspektasi gol gabungan {lam_tot_ht} dengan koreksi skor ketat. "
-            f"Pada garis 0.75 HT diproyeksikan {pred_ht_m_075['pick']} ({pred_ht_m_075['outcome_text']}) dengan keyakinan {pred_ht_m_075['conf_pct']}%. "
-            f"Efisiensi tembakan {team1_name} ({t1_desc_eff}) menjadi pemicu ancaman gol awal."
+            f"Babak 1 (HT): Ekspektasi gol gabungan terkalibrasi Dixon-Coles adalah {lam_tot_ht}. "
+            f"Terdapat {len(ht_high_prob)} opsi pasaran dengan probabilitas tinggi (≥ 85%). "
+            f"Efisiensi serangan {team1_name} ({t1_desc_eff}) dan {team2_name} ({t2_desc_eff}) membentuk pola babak 1."
         ),
         "2ht": (
-            f"Babak 2 (2HT): Ekspektasi intensitas serangan babak kedua berada pada level {lam_tot_2h} gol. "
-            f"Garis 0.75 2HT mengindikasikan opsi {pred_2h_m_075['pick']} ({pred_2h_m_075['outcome_text']}), "
-            f"didorong pembukaan ruang dan volume tembakan {team1_name} ({pred_2h_t1_075['pick']})."
+            f"Babak 2 (2HT): Ekspektasi gol babak kedua berada di {lam_tot_2h}. "
+            f"Terdapat {len(sh_high_prob)} opsi pasaran dengan keyakinan kuat (≥ 85%). "
+            f"Intensitas paruh kedua lebih terbuka seiring dinamika kelelahan fisik pemain."
         ),
         "ft": (
-            f"Full Time (FT - 90 Menit): Total ekspektasi terkalibrasi Dixon-Coles adalah {lam_tot_ft} gol (xG {round(t1_v_xg_ft + t2_v_xg_ft, 2)} | Est. SoT gabungan {round(t1_sot_ft + t2_sot_ft, 1)}). "
-            f"Pada garis utama 2.25 FT ({pred_ft_m_225['pick']}), model memproyeksikan skenario {pred_ft_m_225['outcome_text']} ({pred_ft_m_225['conf_pct']}%). "
-            f"Untuk garis 2.75 FT diproyeksikan {pred_ft_m_275['pick']} ({pred_ft_m_275['outcome_text']}) setelah memperhitungkan konversi tembakan kedua tim."
+            f"Full Time (FT): Agregat 90 menit menghasilkan total ekspektasi {lam_tot_ft} gol (xG {round(t1_v_xg_ft + t2_v_xg_ft, 2)} | Est. SoT {round(t1_sot_ft + t2_sot_ft, 1)}). "
+            f"Tercatat {len(ft_high_prob)} opsi taruhan berkualitas tinggi dengan probabilitas di atas 85%."
         )
     }
 
@@ -283,28 +325,27 @@ def calculate_statistical_prediction(
             "team1": {"sot": t1_sot_ft, "conversion_rate": t1_conv_rate, "efficiency": t1_desc_eff},
             "team2": {"sot": t2_sot_ft, "conversion_rate": t2_conv_rate, "efficiency": t2_desc_eff}
         },
+        "high_confidence_summary": all_high_confidence,
         "predictions": {
             "ht": {
-                "match_075": pred_ht_m_075,
-                "match_125": pred_ht_m_125,
-                "team1_075": pred_ht_t1_075,
-                "team2_075": pred_ht_t2_075
+                "all_picks": ht_picks_list,
+                "high_prob": ht_high_prob,
+                "match_075": next((p for p in ht_picks_list if "Total Laga > 0.75" in p["label"]), ht_picks_list[0]),
+                "match_125": next((p for p in ht_picks_list if "Total Laga > 1.25" in p["label"]), ht_picks_list[0])
             },
             "2ht": {
-                "match_075": pred_2h_m_075,
-                "match_125": pred_2h_m_125,
-                "team1_075": pred_2h_t1_075,
-                "team2_075": pred_2h_t2_075
+                "all_picks": sh_picks_list,
+                "high_prob": sh_high_prob,
+                "match_075": next((p for p in sh_picks_list if "Total Laga > 0.75" in p["label"]), sh_picks_list[0]),
+                "match_125": next((p for p in sh_picks_list if "Total Laga > 1.25" in p["label"]), sh_picks_list[0])
             },
             "ft": {
-                "match_175": pred_ft_m_175,
-                "match_225": pred_ft_m_225,
-                "match_275": pred_ft_m_275,
-                "match_325": pred_ft_m_325,
-                "team1_125": pred_ft_t1_125,
-                "team1_175": pred_ft_t1_175,
-                "team2_075": pred_ft_t2_075,
-                "team2_125": pred_ft_t2_125
+                "all_picks": ft_picks_list,
+                "high_prob": ft_high_prob,
+                "match_175": next((p for p in ft_picks_list if "Total Laga > 1.75" in p["label"]), ft_picks_list[0]),
+                "match_225": next((p for p in ft_picks_list if "Total Laga > 2.25" in p["label"]), ft_picks_list[0]),
+                "match_275": next((p for p in ft_picks_list if "Total Laga > 2.75" in p["label"]), ft_picks_list[0]),
+                "match_325": next((p for p in ft_picks_list if "Total Laga > 3.25" in p["label"]), ft_picks_list[0])
             }
         },
         "reasoning": reasons

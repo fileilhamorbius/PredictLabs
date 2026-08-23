@@ -11,6 +11,7 @@ let team1Venue = 'home';
 let team2Venue = 'away';
 let currentLastN = 10;
 let currentScenario = 'venue'; // 'venue' or 'overall'
+let currentConfFilter = 'high'; // 'high' (>=85%) or 'all'
 let teamsList = [];
 let predictionData = null;
 
@@ -26,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initMatchFilterPills();
     initTeamDropdowns();
     initScenarioToggle();
+    initConfToggle();
     
     // Initial Load
     loadLeague(currentLeague);
@@ -134,6 +136,28 @@ function initScenarioToggle() {
             sBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             currentScenario = btn.getAttribute('data-scenario');
+            renderPredictions();
+        });
+    });
+}
+
+// 7. Confidence Filter Toggle (>= 85% vs All)
+function initConfToggle() {
+    const cBtns = document.querySelectorAll('#confToggle .conf-btn');
+    cBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            cBtns.forEach(b => {
+                b.classList.remove('active');
+                b.style.background = 'transparent';
+                b.style.borderColor = 'transparent';
+                b.style.color = 'var(--text-secondary)';
+            });
+            btn.classList.add('active');
+            btn.style.background = 'var(--btn-active)';
+            btn.style.borderColor = 'var(--accent-cyan)';
+            btn.style.color = '#ffffff';
+
+            currentConfFilter = btn.getAttribute('data-filter');
             renderPredictions();
         });
     });
@@ -269,7 +293,7 @@ function formatCell(val, isAsian) {
     return val;
 }
 
-// Render Prediction Cards with Clean Labels (no redundant "Asia" words)
+// Render Prediction Cards with Support for All Lines & >= 85% High Confidence Options
 function renderPredictions() {
     if (!predictionData) return;
 
@@ -277,14 +301,18 @@ function renderPredictions() {
     const team1 = predictionData.team1.name;
     const team2 = predictionData.team2.name;
 
-    function createPickItemHTML(label, pickData) {
+    function createPickItemHTML(pickData) {
+        const isHigh = pickData.conf_pct >= 85;
         return `
-            <div class="pick-item">
+            <div class="pick-item ${isHigh ? 'high-conf' : ''}">
                 <div class="pick-main-row">
-                    <span class="pick-label">${label}</span>
+                    <span class="pick-label">
+                        ${pickData.label}
+                        ${isHigh ? '<span class="badge-high-conf-tag"><i class="fa-solid fa-fire"></i> ≥85%</span>' : ''}
+                    </span>
                     <div class="pick-result-badge">
                         <span class="${pickData.is_over ? 'badge-pill-over' : 'badge-pill-under'}">${pickData.pick}</span>
-                        <span class="pick-conf">${pickData.conf_pct}%</span>
+                        <span class="pick-conf" style="font-weight: 700; ${isHigh ? 'color: #22c55e;' : ''}">${pickData.conf_pct}%</span>
                     </div>
                 </div>
                 <div class="pick-sub-row">
@@ -294,18 +322,31 @@ function renderPredictions() {
         `;
     }
 
+    function renderList(containerId, picksArray, highProbArray) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        let displayPicks = [];
+        if (currentConfFilter === 'high') {
+            displayPicks = (highProbArray && highProbArray.length > 0) ? highProbArray : (picksArray ? picksArray.slice(0, 3) : []);
+        } else {
+            displayPicks = picksArray || [];
+        }
+
+        if (displayPicks.length === 0) {
+            container.innerHTML = `<div style="color: var(--text-dim); font-size: 0.8rem; text-align: center; padding: 12px;">Tidak ada opsi di atas 85%.</div>`;
+            return;
+        }
+
+        container.innerHTML = displayPicks.map(p => createPickItemHTML(p)).join('');
+    }
+
     // 1. Babak 1 (HT)
     const htExp = predObj.expectancies.ht;
     document.getElementById('htExpBadge').textContent = `λ Match: ${htExp.total} gol (xG)`;
 
     const htP = predObj.predictions.ht;
-    const htList = document.getElementById('htPicksList');
-    htList.innerHTML = `
-        ${createPickItemHTML('Total Laga > 0.75 HT', htP.match_075)}
-        ${createPickItemHTML('Total Laga > 1.25 HT', htP.match_125)}
-        ${createPickItemHTML(`${team1} > 0.75 HT`, htP.team1_075)}
-        ${createPickItemHTML(`${team2} > 0.75 HT`, htP.team2_075)}
-    `;
+    renderList('htPicksList', htP.all_picks, htP.high_prob);
     document.getElementById('htReasoningText').textContent = predObj.reasoning.ht;
 
     // 2. Babak 2 (2HT)
@@ -313,13 +354,7 @@ function renderPredictions() {
     document.getElementById('shExpBadge').textContent = `λ Match: ${shExp.total} gol (xG)`;
 
     const shP = predObj.predictions['2ht'];
-    const shList = document.getElementById('shPicksList');
-    shList.innerHTML = `
-        ${createPickItemHTML('Total Laga > 0.75 2HT', shP.match_075)}
-        ${createPickItemHTML('Total Laga > 1.25 2HT', shP.match_125)}
-        ${createPickItemHTML(`${team1} > 0.75 2HT`, shP.team1_075)}
-        ${createPickItemHTML(`${team2} > 0.75 2HT`, shP.team2_075)}
-    `;
+    renderList('shPicksList', shP.all_picks, shP.high_prob);
     document.getElementById('shReasoningText').textContent = predObj.reasoning['2ht'];
 
     // 3. Full Time (FT)
@@ -327,14 +362,7 @@ function renderPredictions() {
     document.getElementById('ftExpBadge').textContent = `λ Match: ${ftExp.total} gol (xG)`;
 
     const ftP = predObj.predictions.ft;
-    const ftList = document.getElementById('ftPicksList');
-    ftList.innerHTML = `
-        ${createPickItemHTML('Total Laga > 1.75 FT', ftP.match_175)}
-        ${createPickItemHTML('Total Laga > 2.25 FT', ftP.match_225)}
-        ${createPickItemHTML('Total Laga > 2.75 FT', ftP.match_275)}
-        ${createPickItemHTML('Total Laga > 3.25 FT', ftP.match_325)}
-        ${createPickItemHTML(`${team1} > 1.25 FT`, ftP.team1_125)}
-        ${createPickItemHTML(`${team2} > 0.75 FT`, ftP.team2_075)}
-    `;
+    renderList('ftPicksList', ftP.all_picks, ftP.high_prob);
     document.getElementById('ftReasoningText').textContent = predObj.reasoning.ft;
 }
+
