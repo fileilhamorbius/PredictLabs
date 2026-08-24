@@ -197,6 +197,43 @@
                     </div>
                 </div>
             </div>
+
+            <!-- SELECTED PICKS COMPARISON PANEL -->
+            <div class="sofa-compare-panel" id="sofaComparePanel">
+                <div class="compare-panel-header">
+                    <div class="compare-header-title">
+                        <i class="fa-solid fa-crown" style="color: #f59e0b;"></i>
+                        <span>KOMPARASI PILIHAN TERBAIK ANDA</span>
+                        <span class="compare-counter-badge" id="compareCountBadge">0 Terpilih</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 0.74rem; color: var(--text-dim);">💡 Klik kartu di atas untuk memilih/membatalkan</span>
+                        <button class="compare-reset-btn" id="compareResetBtn" title="Reset Semua Pilihan">
+                            <i class="fa-solid fa-rotate-right"></i> Reset Pilihan
+                        </button>
+                    </div>
+                </div>
+                <div class="compare-grid" id="compareGrid">
+                    <div class="compare-col" id="compareColHT">
+                        <div class="compare-col-head"><i class="fa-solid fa-stopwatch text-cyan"></i> Pilihan Babak 1 (HT)</div>
+                        <div class="compare-col-body" id="compareBodyHT">
+                            <div class="compare-empty-placeholder">Klik kartu di kolom HT untuk menandai</div>
+                        </div>
+                    </div>
+                    <div class="compare-col" id="compareCol2HT">
+                        <div class="compare-col-head"><i class="fa-solid fa-stopwatch-20 text-cyan"></i> Pilihan Babak 2 (2HT)</div>
+                        <div class="compare-col-body" id="compareBody2HT">
+                            <div class="compare-empty-placeholder">Klik kartu di kolom 2HT untuk menandai</div>
+                        </div>
+                    </div>
+                    <div class="compare-col" id="compareColFT">
+                        <div class="compare-col-head"><i class="fa-solid fa-flag-checkered text-cyan"></i> Pilihan Full Time (FT)</div>
+                        <div class="compare-col-body" id="compareBodyFT">
+                            <div class="compare-empty-placeholder">Klik kartu di kolom FT untuk menandai</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- Symmetrical Comparison Matrix Table -->

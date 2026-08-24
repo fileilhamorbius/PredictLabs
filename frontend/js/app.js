@@ -21,6 +21,13 @@ const ASIAN_OVER_UNDER_KEYS = [
     'o325', 'o375', 'o425', 'o475', 'o525', 'o575'
 ];
 
+// Selected User Picks for Comparison (HT, 2HT, FT)
+let userSelectedPicks = {
+    ht: [],
+    '2ht': [],
+    ft: []
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     initLeagueTabs();
     initSeasonPills();
@@ -30,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initScenarioToggle();
     initConfToggle();
     initBetModeToggle();
+    initComparePanelEvents();
     
     // Initial Load
     loadLeague(currentLeague);
@@ -59,73 +67,66 @@ function initLeagueTabs() {
         } catch (e) {
             console.error('Sync error:', e);
         } finally {
-            btnSync.innerHTML = originalText;
             btnSync.classList.remove('loading');
             btnSync.disabled = false;
+            btnSync.innerHTML = originalText;
         }
     });
 }
 
-// 2. Season / Tahun Kompetisi Filter
+// 2. Season Pills
 function initSeasonPills() {
-    const seasonBtns = document.querySelectorAll('#seasonPills .season-btn');
-    seasonBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            seasonBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentSeason = btn.getAttribute('data-season');
-            loadLeague(currentLeague);
+    const pills = document.querySelectorAll('#seasonPills .season-pill');
+    pills.forEach(pill => {
+        pill.addEventListener('click', () => {
+            pills.forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+            currentSeason = pill.getAttribute('data-season');
+            updateMatrix();
         });
     });
 }
 
-// 3. Venue Pills (Home / Away / Overall for Team 1 & Team 2)
+// 3. Venue Pills
 function initVenuePills() {
-    const t1Pills = document.querySelectorAll('#team1VenuePills .venue-btn');
-    t1Pills.forEach(btn => {
-        btn.addEventListener('click', () => {
-            t1Pills.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            team1Venue = btn.getAttribute('data-venue');
+    const t1Pills = document.querySelectorAll('.t1-venue-pill');
+    t1Pills.forEach(pill => {
+        pill.addEventListener('click', () => {
+            t1Pills.forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+            team1Venue = pill.getAttribute('data-venue');
             updateMatrix();
         });
     });
 
-    const t2Pills = document.querySelectorAll('#team2VenuePills .venue-btn');
-    t2Pills.forEach(btn => {
-        btn.addEventListener('click', () => {
-            t2Pills.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            team2Venue = btn.getAttribute('data-venue');
+    const t2Pills = document.querySelectorAll('.t2-venue-pill');
+    t2Pills.forEach(pill => {
+        pill.addEventListener('click', () => {
+            t2Pills.forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+            team2Venue = pill.getAttribute('data-venue');
             updateMatrix();
         });
     });
 }
 
-// 4. Match Range Filter (Last 3, Last 5, Last 10)
+// 4. Last Matches Filter Pills (3, 5, 10)
 function initMatchFilterPills() {
     const mPills = document.querySelectorAll('#matchFilterPills .match-btn');
-    mPills.forEach(btn => {
-        btn.addEventListener('click', () => {
-            mPills.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentLastN = parseInt(btn.getAttribute('data-n'));
-            
-            const badge = document.getElementById('predActiveMatchBadge');
-            if (badge) {
-                badge.textContent = `Basis: Last ${currentLastN} Matches`;
-            }
-            
+    mPills.forEach(pill => {
+        pill.addEventListener('click', () => {
+            mPills.forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+            currentLastN = parseInt(pill.getAttribute('data-n'), 10);
             updateMatrix();
         });
     });
 }
 
-// 5. Team Selectors
+// 5. Team Dropdowns
 function initTeamDropdowns() {
     const s1 = document.getElementById('team1Select');
     const s2 = document.getElementById('team2Select');
-
     s1.addEventListener('change', updateMatrix);
     s2.addEventListener('change', updateMatrix);
 }
@@ -177,6 +178,18 @@ function initBetModeToggle() {
             renderPredictions();
         });
     });
+}
+
+// 9. Comparison Panel & Reset Listener
+function initComparePanelEvents() {
+    const resetBtn = document.getElementById('compareResetBtn');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            userSelectedPicks = { ht: [], '2ht': [], ft: [] };
+            document.querySelectorAll('.sofa-pick-card.is-selected').forEach(c => c.classList.remove('is-selected'));
+            renderComparePanel();
+        });
+    }
 }
 
 // Master Loader
@@ -236,6 +249,10 @@ async function updateMatrix() {
     if (badge) {
         badge.textContent = `Basis: Last ${currentLastN} Matches`;
     }
+
+    // Reset user selections on team change
+    userSelectedPicks = { ht: [], '2ht': [], ft: [] };
+    renderComparePanel();
 
     try {
         // 1. Fetch Matrix Comparison Table
@@ -315,13 +332,16 @@ function renderPredictions() {
 
     const predObj = currentScenario === 'venue' ? predictionData.venue_prediction : predictionData.overall_prediction;
 
-    function createPickItemHTML(pickData) {
+    function createPickItemHTML(pickData, period) {
         const isParlayMode = currentBetMode === 'parlay';
         const confValue = isParlayMode ? pickData.parlay_safety_pct : pickData.single_conf_pct;
         const isHigh = confValue >= 85;
 
         const actionClass = pickData.is_over ? 'badge-pill-over' : 'badge-pill-under';
         const cardStateClass = isParlayMode ? (isHigh ? 'parlay-safe' : '') : (isHigh ? 'high-conf' : '');
+
+        const pickKey = `${period}_${pickData.label}_${pickData.pick}`;
+        const isSelected = userSelectedPicks[period] && userSelectedPicks[period].some(p => p.key === pickKey);
 
         let statusHTML = '';
         if (isParlayMode) {
@@ -335,7 +355,16 @@ function renderPredictions() {
         }
 
         return `
-            <div class="sofa-pick-card ${cardStateClass}">
+            <div class="sofa-pick-card ${cardStateClass} ${isSelected ? 'is-selected' : ''}"
+                 data-period="${period}"
+                 data-key="${pickKey}"
+                 data-label="${pickData.label}"
+                 data-pick="${pickData.pick}"
+                 data-conf="${confValue}"
+                 data-is-over="${pickData.is_over}"
+                 data-mode="${isParlayMode ? 'parlay' : 'single'}"
+                 data-loss="${pickData.parlay_loss_pct || 0}"
+                 data-outcome="${pickData.outcome_text || ''}">
                 <div class="sofa-pick-top">
                     <span class="sofa-market-name">${pickData.label}</span>
                     <div class="sofa-metric-badge">
@@ -354,7 +383,7 @@ function renderPredictions() {
         `;
     }
 
-    function renderList(containerId, picksArray, highProbArray, highOverArray, highUnderArray, parlaySafeArray) {
+    function renderList(containerId, periodKey, picksArray, highProbArray, highOverArray, highUnderArray, parlaySafeArray) {
         const container = document.getElementById(containerId);
         if (!container) return;
 
@@ -392,7 +421,12 @@ function renderPredictions() {
             return;
         }
 
-        container.innerHTML = displayPicks.map(p => createPickItemHTML(p)).join('');
+        container.innerHTML = displayPicks.map(p => createPickItemHTML(p, periodKey)).join('');
+
+        // Attach Card Click Events
+        container.querySelectorAll('.sofa-pick-card').forEach(card => {
+            card.addEventListener('click', () => toggleCardSelection(card));
+        });
     }
 
     // 1. Babak 1 (HT)
@@ -400,7 +434,7 @@ function renderPredictions() {
     document.getElementById('htExpBadge').textContent = `λ Match: ${htExp.total} gol (xG)`;
 
     const htP = predObj.predictions.ht;
-    renderList('htPicksList', htP.all_picks, htP.high_prob, htP.high_over, htP.high_under, htP.parlay_safe);
+    renderList('htPicksList', 'ht', htP.all_picks, htP.high_prob, htP.high_over, htP.high_under, htP.parlay_safe);
     document.getElementById('htReasoningText').textContent = predObj.reasoning.ht;
 
     // 2. Babak 2 (2HT)
@@ -408,7 +442,7 @@ function renderPredictions() {
     document.getElementById('shExpBadge').textContent = `λ Match: ${shExp.total} gol (xG)`;
 
     const shP = predObj.predictions['2ht'];
-    renderList('shPicksList', shP.all_picks, shP.high_prob, shP.high_over, shP.high_under, shP.parlay_safe);
+    renderList('shPicksList', '2ht', shP.all_picks, shP.high_prob, shP.high_over, shP.high_under, shP.parlay_safe);
     document.getElementById('shReasoningText').textContent = predObj.reasoning['2ht'];
 
     // 3. Full Time (FT)
@@ -416,10 +450,99 @@ function renderPredictions() {
     document.getElementById('ftExpBadge').textContent = `λ Match: ${ftExp.total} gol (xG)`;
 
     const ftP = predObj.predictions.ft;
-    renderList('ftPicksList', ftP.all_picks, ftP.high_prob, ftP.high_over, ftP.high_under, ftP.parlay_safe);
+    renderList('ftPicksList', 'ft', ftP.all_picks, ftP.high_prob, ftP.high_over, ftP.high_under, ftP.parlay_safe);
     document.getElementById('ftReasoningText').textContent = predObj.reasoning.ft;
+
+    renderComparePanel();
 }
 
+// Toggle Selection on Card Click
+function toggleCardSelection(cardElem) {
+    const period = cardElem.getAttribute('data-period');
+    const key = cardElem.getAttribute('data-key');
+    const label = cardElem.getAttribute('data-label');
+    const pick = cardElem.getAttribute('data-pick');
+    const conf = cardElem.getAttribute('data-conf');
+    const isOver = cardElem.getAttribute('data-is-over') === 'true';
+    const mode = cardElem.getAttribute('data-mode');
+    const loss = cardElem.getAttribute('data-loss');
+    const outcome = cardElem.getAttribute('data-outcome');
 
+    if (!userSelectedPicks[period]) userSelectedPicks[period] = [];
 
+    const existingIndex = userSelectedPicks[period].findIndex(p => p.key === key);
+    if (existingIndex >= 0) {
+        userSelectedPicks[period].splice(existingIndex, 1);
+        cardElem.classList.remove('is-selected');
+    } else {
+        userSelectedPicks[period].push({
+            period,
+            key,
+            label,
+            pick,
+            conf,
+            isOver,
+            mode,
+            loss,
+            outcome
+        });
+        cardElem.classList.add('is-selected');
+    }
 
+    renderComparePanel();
+}
+
+// Render Comparison Panel
+function renderComparePanel() {
+    const totalCount = (userSelectedPicks.ht?.length || 0) + (userSelectedPicks['2ht']?.length || 0) + (userSelectedPicks.ft?.length || 0);
+    const countBadge = document.getElementById('compareCountBadge');
+    if (countBadge) {
+        countBadge.textContent = `${totalCount} Terpilih`;
+    }
+
+    function renderCol(periodKey, containerId, periodTitle) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        const list = userSelectedPicks[periodKey] || [];
+        if (list.length === 0) {
+            container.innerHTML = `<div class="compare-empty-placeholder">Klik kartu di kolom ${periodTitle} untuk menandai</div>`;
+            return;
+        }
+
+        container.innerHTML = list.map(item => `
+            <div class="compare-item-card">
+                <div class="c-top">
+                    <span>${item.label}</span>
+                    <span class="c-val">${item.conf}% <span style="font-size:0.68rem; font-weight:normal; color:#64748b;">${item.mode === 'parlay' ? 'Aman' : 'Peluang'}</span></span>
+                </div>
+                <div class="c-bottom">
+                    <span class="sofa-action-pill ${item.isOver ? 'badge-pill-over' : 'badge-pill-under'}" style="font-size: 0.7rem; padding: 2px 7px;">${item.pick}</span>
+                    <span style="font-size: 0.72rem; color: #475569;">
+                        ${item.mode === 'parlay' ? `🛡️ Resiko: ${item.loss}%` : `${item.outcome}`}
+                    </span>
+                    <button class="c-remove" onclick="removeSelectedPick('${periodKey}', '${item.key}')" title="Hapus dari komparasi">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    renderCol('ht', 'compareBodyHT', 'HT');
+    renderCol('2ht', 'compareBody2HT', '2HT');
+    renderCol('ft', 'compareBodyFT', 'FT');
+}
+
+// Window Global Remove Callback for Comparison Badges
+window.removeSelectedPick = function(period, key) {
+    if (userSelectedPicks[period]) {
+        const idx = userSelectedPicks[period].findIndex(p => p.key === key);
+        if (idx >= 0) {
+            userSelectedPicks[period].splice(idx, 1);
+        }
+    }
+    const cardElem = document.querySelector(`.sofa-pick-card[data-key="${key}"]`);
+    if (cardElem) cardElem.classList.remove('is-selected');
+    renderComparePanel();
+};
