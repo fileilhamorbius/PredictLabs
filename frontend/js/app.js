@@ -76,20 +76,20 @@ function initLeagueTabs() {
 
 // 2. Season Pills
 function initSeasonPills() {
-    const pills = document.querySelectorAll('#seasonPills .season-pill');
+    const pills = document.querySelectorAll('#seasonPills .season-btn');
     pills.forEach(pill => {
         pill.addEventListener('click', () => {
             pills.forEach(p => p.classList.remove('active'));
             pill.classList.add('active');
             currentSeason = pill.getAttribute('data-season');
-            updateMatrix();
+            loadLeague(currentLeague);
         });
     });
 }
 
-// 3. Venue Pills
+// 3. Venue Pills (Home / Away / Overall for Team 1 & Team 2)
 function initVenuePills() {
-    const t1Pills = document.querySelectorAll('.t1-venue-pill');
+    const t1Pills = document.querySelectorAll('#team1VenuePills .venue-btn');
     t1Pills.forEach(pill => {
         pill.addEventListener('click', () => {
             t1Pills.forEach(p => p.classList.remove('active'));
@@ -99,7 +99,7 @@ function initVenuePills() {
         });
     });
 
-    const t2Pills = document.querySelectorAll('.t2-venue-pill');
+    const t2Pills = document.querySelectorAll('#team2VenuePills .venue-btn');
     t2Pills.forEach(pill => {
         pill.addEventListener('click', () => {
             t2Pills.forEach(p => p.classList.remove('active'));
