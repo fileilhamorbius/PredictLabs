@@ -231,8 +231,8 @@ async function updateMatrix() {
     if (!team1 || !team2) return;
 
     document.getElementById('labelTeam1Mean').innerHTML = `<div class="th-stat-label">MEAN</div><div class="th-team-label">(${team1})</div>`;
-    document.getElementById('labelTeam1Med').innerHTML = `<div class="th-stat-label">MEDIAN</div><div class="th-team-label">(${team1})</div>`;
     document.getElementById('labelTeam2Mean').innerHTML = `<div class="th-stat-label">MEAN</div><div class="th-team-label">(${team2})</div>`;
+    document.getElementById('labelTeam1Med').innerHTML = `<div class="th-stat-label">MEDIAN</div><div class="th-team-label">(${team1})</div>`;
     document.getElementById('labelTeam2Med').innerHTML = `<div class="th-stat-label">MEDIAN</div><div class="th-team-label">(${team2})</div>`;
 
     const badge = document.getElementById('predActiveMatchBadge');
