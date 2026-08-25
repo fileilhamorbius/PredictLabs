@@ -40,12 +40,22 @@
 
     <!-- Main Container -->
     <main class="main-wrapper">
-        <!-- Filter Tahun Kompetisi (Season Selector) -->
+        <!-- Filter Bar: Musim Kompetisi & Match Filter Sebaris (Last 3, Last 5, Last 10) -->
         <section class="season-filter-section">
-            <span class="filter-label"><i class="fa-solid fa-calendar-days"></i> Musim Kompetisi:</span>
-            <div class="season-pills" id="seasonPills">
-                <button class="season-btn active" data-season="2026/2027">2026/2027 (Musim Ini)</button>
-                <button class="season-btn" data-season="2025/2026">2025/2026 (1 Musim Lalu)</button>
+            <div class="season-filter-left">
+                <span class="filter-label"><i class="fa-solid fa-calendar-days"></i> Musim:</span>
+                <div class="season-pills" id="seasonPills">
+                    <button class="season-btn active" data-season="2026/2027">2026/2027 (Musim Ini)</button>
+                    <button class="season-btn" data-season="2025/2026">2025/2026 (1 Musim Lalu)</button>
+                </div>
+            </div>
+
+            <div class="matches-filter-right">
+                <div class="matches-pills" id="matchFilterPills">
+                    <button class="match-btn" data-n="3">Last 3</button>
+                    <button class="match-btn" data-n="5">Last 5</button>
+                    <button class="match-btn active" data-n="10">Last 10</button>
+                </div>
             </div>
         </section>
 
@@ -78,16 +88,7 @@
             </div>
         </section>
 
-        <!-- Center Match Filter Pills (Last 3, Last 5, Last 10) -->
-        <section class="matches-filter-section">
-            <div class="matches-pills" id="matchFilterPills">
-                <button class="match-btn" data-n="3">Last 3</button>
-                <button class="match-btn" data-n="5">Last 5</button>
-                <button class="match-btn active" data-n="10">Last 10</button>
-            </div>
-        </section>
-
-        <!-- PREDICTION SECTION (Sofascore-style Sports Intelligence Engine) -->
+        <!-- PREDICTION SECTION (FotMob-style Sports Intelligence Engine) -->
         <section class="prediction-card sofa-pred-section" id="predictionSection">
             <!-- Top Controls Header -->
             <div class="sofa-header-main">
@@ -98,7 +99,6 @@
                         <span class="sofa-chip-model"><i class="fa-solid fa-bolt"></i> Dixon-Coles Model</span>
                         <span class="sofa-chip-match" id="predActiveMatchBadge">Last 10 Matches</span>
                     </div>
-                    <p class="sofa-subtitle" id="predictionSubtitle">Probabilitas kuantitatif pasaran Asia untuk Single Bet & Proteksi Anti-Gugur Mix Parlay.</p>
                 </div>
 
                 <!-- Segmented Control Bar -->

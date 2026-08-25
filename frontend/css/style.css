@@ -1,6 +1,7 @@
 /* =========================================================
    PREDICTLABS - FOTMOB PRO MATTE DARK THEME
    Inspired by FotMob Dark Mode (Clean, Minimalist, Matte Charcoal)
+   All typography unified under 'Inter' font family
    ========================================================= */
 
 :root {
@@ -17,9 +18,9 @@
     --border-medium: rgba(255, 255, 255, 0.13);
     --border-focus: rgba(255, 255, 255, 0.25);
 
-    /* Typography */
+    /* Typography - All Inter Family */
     --font-main: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    --font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+    --font-mono: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
     /* Text Hierarchy */
     --text-primary: #ffffff;
@@ -43,6 +44,11 @@
     --fotmob-amber: #f59e0b;
     --fotmob-amber-bg: rgba(245, 158, 11, 0.12);
     --fotmob-amber-border: rgba(245, 158, 11, 0.28);
+
+    /* Soft Calming Yellow for Selected User Picks */
+    --soft-yellow-bg: #fef9c3;
+    --soft-yellow-border: #fde047;
+    --soft-yellow-text: #1e293b;
 
     /* Radii */
     --radius-sm: 6px;
@@ -199,15 +205,15 @@ body {
 .main-wrapper {
     max-width: 1380px;
     margin: 0 auto;
-    padding: 20px 20px 40px;
+    padding: 16px 20px 40px;
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 14px;
 }
 
 /* =========================================================
-   SEASON & TOP CONTROLS
+   SEASON & MATCH FILTER BAR (Sebaris untuk Efisiensi Ruang)
    ========================================================= */
 .season-filter-section {
     display: flex;
@@ -216,8 +222,16 @@ body {
     background: var(--bg-card);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-md);
-    padding: 10px 16px;
-    gap: 12px;
+    padding: 8px 16px;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.season-filter-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
 .filter-label {
@@ -234,16 +248,16 @@ body {
 .season-pills {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
 }
 
 .season-btn {
     background: var(--bg-surface);
     border: 1px solid var(--border-subtle);
     color: var(--text-secondary);
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     font-weight: 600;
-    padding: 6px 14px;
+    padding: 5px 12px;
     border-radius: var(--radius-full);
     cursor: pointer;
     transition: all 0.15s ease;
@@ -261,23 +275,60 @@ body {
     font-weight: 700;
 }
 
+.matches-filter-right {
+    display: flex;
+    align-items: center;
+}
+
+.matches-pills {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    padding: 3px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.match-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.76rem;
+    font-weight: 600;
+    padding: 4px 14px;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.match-btn:hover {
+    color: #ffffff;
+}
+
+.match-btn.active {
+    background: #ffffff;
+    color: #0a0a0c;
+    font-weight: 800;
+}
+
 /* =========================================================
    MATCH SELECTORS & VENUE PILLS (FotMob Team Header)
    ========================================================= */
 .selectors-section {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    gap: 14px;
 }
 
 .team-column {
     background: var(--bg-card);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-md);
-    padding: 14px 16px;
+    padding: 12px 14px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
 }
 
 .select-wrapper {
@@ -290,9 +341,9 @@ body {
     background: var(--bg-surface);
     border: 1px solid var(--border-subtle);
     color: #ffffff;
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 800;
-    padding: 10px 14px;
+    padding: 9px 12px;
     border-radius: var(--radius-sm);
     cursor: pointer;
     outline: none;
@@ -323,7 +374,7 @@ body {
     color: var(--text-secondary);
     font-size: 0.76rem;
     font-weight: 600;
-    padding: 6px 10px;
+    padding: 5px 8px;
     border-radius: var(--radius-sm);
     cursor: pointer;
     text-align: center;
@@ -342,44 +393,6 @@ body {
     font-weight: 700;
 }
 
-/* Match Filter Range (Last 3, Last 5, Last 10) */
-.matches-filter-section {
-    display: flex;
-    justify-content: center;
-}
-
-.matches-pills {
-    background: var(--bg-card);
-    border: 1px solid var(--border-subtle);
-    padding: 4px;
-    border-radius: var(--radius-full);
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.match-btn {
-    background: transparent;
-    border: none;
-    color: var(--text-secondary);
-    font-size: 0.78rem;
-    font-weight: 600;
-    padding: 5px 16px;
-    border-radius: var(--radius-full);
-    cursor: pointer;
-    transition: all 0.15s ease;
-}
-
-.match-btn:hover {
-    color: #ffffff;
-}
-
-.match-btn.active {
-    background: var(--bg-surface-active);
-    color: #ffffff;
-    font-weight: 700;
-}
-
 /* =========================================================
    PREDICTION SECTION (FotMob Fixture & Probability Grid)
    ========================================================= */
@@ -387,10 +400,10 @@ body {
     background: var(--bg-card);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-lg);
-    padding: 20px;
+    padding: 18px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 14px;
 }
 
 /* Top Header Bar */
@@ -400,7 +413,7 @@ body {
     justify-content: space-between;
     gap: 16px;
     flex-wrap: wrap;
-    padding-bottom: 14px;
+    padding-bottom: 12px;
     border-bottom: 1px solid var(--border-subtle);
 }
 
@@ -447,11 +460,6 @@ body {
     border: 1px solid var(--fotmob-green-border);
     padding: 2px 8px;
     border-radius: var(--radius-sm);
-}
-
-.sofa-subtitle {
-    font-size: 0.78rem;
-    color: var(--text-muted);
 }
 
 /* Segmented Control Bar */
@@ -597,7 +605,6 @@ body {
 }
 
 .period-badge {
-    font-family: var(--font-mono);
     font-size: 0.72rem;
     font-weight: 700;
     color: var(--fotmob-blue);
@@ -607,27 +614,11 @@ body {
     border-radius: var(--radius-sm);
 }
 
+/* NO INTERNAL SCROLL - Cards expand naturally so user uses main page scroll */
 .pred-picks-list {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    max-height: 520px;
-    overflow-y: auto;
-    padding-right: 4px;
-}
-
-.pred-picks-list::-webkit-scrollbar {
-    width: 4px;
-}
-.pred-picks-list::-webkit-scrollbar-track {
-    background: transparent;
-}
-.pred-picks-list::-webkit-scrollbar-thumb {
-    background: var(--border-subtle);
-    border-radius: 2px;
-}
-.pred-picks-list::-webkit-scrollbar-thumb:hover {
-    background: var(--border-medium);
 }
 
 /* =========================================================
@@ -676,7 +667,6 @@ body {
 }
 
 .sofa-pct-value {
-    font-family: var(--font-mono);
     font-size: 0.92rem;
     font-weight: 800;
     color: var(--fotmob-green);
@@ -701,7 +691,6 @@ body {
 }
 
 .sofa-action-pill {
-    font-family: var(--font-mono);
     font-size: 0.72rem;
     font-weight: 800;
     padding: 2px 7px;
@@ -756,22 +745,23 @@ body {
 }
 
 /* =========================================================
-   WHITE CARD SELECTED STATE (Pilihan User)
+   SOFT CALM PASTEL YELLOW SELECTED STATE (Pilihan User)
+   Tenang, nyaman, tidak mencolok/silau
    ========================================================= */
 .sofa-pick-card.is-selected {
-    background: #ffffff !important;
-    border: 2px solid #ffffff !important;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3) !important;
+    background: var(--soft-yellow-bg) !important;
+    border: 1.5px solid var(--soft-yellow-border) !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
 }
 
 .sofa-pick-card.is-selected .sofa-market-name {
-    color: #0f172a !important;
+    color: var(--soft-yellow-text) !important;
     font-weight: 800;
 }
 
 .sofa-pick-card.is-selected .sofa-pct-value {
     color: #047857 !important;
-    font-weight: 900;
+    font-weight: 800;
 }
 
 .sofa-pick-card.is-selected.parlay-safe .sofa-pct-value {
@@ -779,11 +769,11 @@ body {
 }
 
 .sofa-pick-card.is-selected .sofa-pct-sub {
-    color: #475569 !important;
+    color: #64748b !important;
 }
 
 .sofa-pick-card.is-selected .sofa-status-text {
-    color: #334155 !important;
+    color: #475569 !important;
     font-weight: 600;
 }
 
@@ -796,7 +786,7 @@ body {
 }
 
 .sofa-pick-card.is-selected .sofa-micro-fill {
-    background: #059669 !important;
+    background: #ca8a04 !important;
 }
 
 .sofa-pick-card.is-selected.parlay-safe .sofa-micro-fill {
@@ -812,7 +802,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 3px;
-    margin-top: auto;
+    margin-top: 6px;
 }
 
 .reasoning-title {
@@ -864,7 +854,6 @@ body {
 
 .compare-counter-badge {
     font-size: 0.7rem;
-    font-family: var(--font-mono);
     font-weight: 700;
     padding: 2px 7px;
     border-radius: var(--radius-full);
@@ -936,14 +925,14 @@ body {
 }
 
 .compare-item-card {
-    background: #ffffff;
-    color: #0f172a;
+    background: var(--soft-yellow-bg);
+    color: var(--soft-yellow-text);
     border-radius: var(--radius-sm);
     padding: 8px 10px;
     display: flex;
     flex-direction: column;
     gap: 4px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--soft-yellow-border);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
     position: relative;
 }
@@ -954,13 +943,13 @@ body {
     justify-content: space-between;
     font-size: 0.8rem;
     font-weight: 800;
-    color: #0f172a;
+    color: var(--soft-yellow-text);
 }
 
 .compare-item-card .c-val {
     color: #047857;
-    font-family: var(--font-mono);
     font-size: 0.86rem;
+    font-weight: 800;
 }
 
 .compare-item-card .c-bottom {
@@ -971,7 +960,7 @@ body {
 }
 
 .compare-item-card .c-remove {
-    color: #94a3b8;
+    color: #64748b;
     cursor: pointer;
     font-size: 0.74rem;
     padding: 2px 4px;
@@ -987,7 +976,7 @@ body {
 }
 
 /* =========================================================
-   SYMMETRICAL COMPARISON MATRIX TABLE (Clean Minimalist)
+   SYMMETRICAL COMPARISON MATRIX TABLE (Clean 2-Row Header)
    ========================================================= */
 .matrix-card {
     background: var(--bg-card);
@@ -1006,28 +995,44 @@ body {
 
 .matrix-table th,
 .matrix-table td {
-    padding: 8px 10px;
+    padding: 8px 6px;
     border-bottom: 1px solid var(--border-subtle);
 }
 
 .header-group-row th {
-    font-size: 0.8rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
     background: var(--bg-dark-well);
+    padding: 8px 4px;
+    vertical-align: middle;
 }
 
-.group-mean-1, .group-mean-2 {
+.th-stat-label {
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+}
+
+.group-mean-1 .th-stat-label, .group-mean-2 .th-stat-label {
     color: var(--fotmob-green);
 }
 
-.group-med-1, .group-med-2 {
+.group-med-1 .th-stat-label, .group-med-2 .th-stat-label {
     color: var(--fotmob-blue);
 }
 
+.th-team-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    max-width: 140px;
+    margin: 2px auto 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .metric-center-header {
-    width: 90px;
+    width: 80px;
     background: transparent;
 }
 
@@ -1102,5 +1107,10 @@ body {
     }
     .selectors-section {
         grid-template-columns: 1fr;
+    }
+    .season-filter-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
     }
 }
