@@ -1,22 +1,21 @@
 /* =========================================================
-   PREDICTLABS - FOTMOB PRO MATTE DARK THEME
-   Inspired by FotMob Dark Mode (Clean, Minimalist, Matte Charcoal)
-   All typography unified under 'Inter' font family
+   PREDICTLABS - FOTMOB PRO BORDERLESS DARK THEME
+   Smooth layer-based depth, Zero harsh outlines, Spacious layout
+   All typography: 'Inter' family
    ========================================================= */
 
 :root {
-    /* FotMob Core Canvas & Surfaces */
-    --bg-canvas: #0a0a0c;
-    --bg-card: #16191f;
-    --bg-surface: #1e2229;
-    --bg-surface-hover: #262b34;
-    --bg-surface-active: #323844;
-    --bg-dark-well: #101216;
+    /* FotMob Seamless Canvas & Surface Layers */
+    --bg-canvas: #0a0b0e;
+    --bg-card: #15171e;
+    --bg-surface: #1d2028;
+    --bg-surface-hover: #262a34;
+    --bg-surface-active: #313643;
+    --bg-dark-well: #101217;
 
-    /* Borders */
-    --border-subtle: rgba(255, 255, 255, 0.07);
-    --border-medium: rgba(255, 255, 255, 0.13);
-    --border-focus: rgba(255, 255, 255, 0.25);
+    /* Subtle Dividers (Minimal) */
+    --border-subtle: transparent;
+    --border-divider: rgba(255, 255, 255, 0.04);
 
     /* Typography - All Inter Family */
     --font-main: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -28,22 +27,18 @@
     --text-muted: #6b7280;
     --text-dim: #4b5563;
 
-    /* Accents (Strictly Functional & Muted) */
+    /* Accents (Muted & Functional) */
     --fotmob-green: #00c067;
     --fotmob-green-bg: rgba(0, 192, 103, 0.12);
-    --fotmob-green-border: rgba(0, 192, 103, 0.28);
 
     --fotmob-blue: #3b82f6;
     --fotmob-blue-bg: rgba(59, 130, 246, 0.12);
-    --fotmob-blue-border: rgba(59, 130, 246, 0.28);
 
     --fotmob-red: #ef4444;
     --fotmob-red-bg: rgba(239, 68, 68, 0.12);
-    --fotmob-red-border: rgba(239, 68, 68, 0.28);
 
     --fotmob-amber: #f59e0b;
     --fotmob-amber-bg: rgba(245, 158, 11, 0.12);
-    --fotmob-amber-border: rgba(245, 158, 11, 0.28);
 
     /* Soft Calming Yellow for Selected User Picks */
     --soft-yellow-bg: #fef9c3;
@@ -51,9 +46,9 @@
     --soft-yellow-text: #1e293b;
 
     /* Radii */
-    --radius-sm: 6px;
-    --radius-md: 10px;
-    --radius-lg: 14px;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
     --radius-full: 9999px;
 }
 
@@ -76,20 +71,20 @@ body {
 }
 
 /* =========================================================
-   HEADER / NAVBAR (FotMob Style)
+   HEADER / NAVBAR (FotMob Borderless Style)
    ========================================================= */
 .app-header {
     background-color: var(--bg-canvas);
-    border-bottom: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-divider);
     position: sticky;
     top: 0;
     z-index: 50;
 }
 
 .header-inner {
-    max-width: 1380px;
+    max-width: 1180px;
     margin: 0 auto;
-    padding: 12px 20px;
+    padding: 12px 24px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -124,13 +119,12 @@ body {
     letter-spacing: 0.5px;
     color: var(--fotmob-green);
     background: var(--fotmob-green-bg);
-    border: 1px solid var(--fotmob-green-border);
     padding: 2px 6px;
     border-radius: var(--radius-sm);
     text-transform: uppercase;
 }
 
-/* League Navigation Tabs (Capsules) */
+/* League Navigation Tabs (Pill Capsules without outlines) */
 .league-tabs {
     display: flex;
     align-items: center;
@@ -145,11 +139,11 @@ body {
 
 .league-pill {
     background: var(--bg-card);
-    border: 1px solid var(--border-subtle);
+    border: none;
     color: var(--text-secondary);
     font-size: 0.82rem;
     font-weight: 600;
-    padding: 6px 14px;
+    padding: 7px 15px;
     border-radius: var(--radius-full);
     cursor: pointer;
     white-space: nowrap;
@@ -159,24 +153,22 @@ body {
 .league-pill:hover {
     background: var(--bg-surface);
     color: #ffffff;
-    border-color: var(--border-medium);
 }
 
 .league-pill.active {
     background: #ffffff;
     color: #0a0a0c;
-    border-color: #ffffff;
-    font-weight: 700;
+    font-weight: 800;
 }
 
 /* Sync Button */
 .btn-sync {
-    background: var(--bg-surface);
-    border: 1px solid var(--border-subtle);
+    background: var(--bg-card);
+    border: none;
     color: var(--text-secondary);
     font-size: 0.78rem;
     font-weight: 600;
-    padding: 6px 14px;
+    padding: 7px 15px;
     border-radius: var(--radius-full);
     cursor: pointer;
     display: flex;
@@ -186,9 +178,8 @@ body {
 }
 
 .btn-sync:hover {
-    background: var(--bg-surface-hover);
+    background: var(--bg-surface);
     color: #ffffff;
-    border-color: var(--border-medium);
 }
 
 .btn-sync.loading i {
@@ -200,29 +191,29 @@ body {
 }
 
 /* =========================================================
-   MAIN LAYOUT CONTAINER
+   MAIN LAYOUT CONTAINER (With Generous Breathing Room)
    ========================================================= */
 .main-wrapper {
-    max-width: 1380px;
+    max-width: 1180px;
     margin: 0 auto;
-    padding: 16px 20px 40px;
+    padding: 20px 24px 50px;
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 16px;
 }
 
 /* =========================================================
-   SEASON & MATCH FILTER BAR (Sebaris untuk Efisiensi Ruang)
+   SEASON & MATCH FILTER BAR (Borderless Flat Layer)
    ========================================================= */
 .season-filter-section {
     display: flex;
     align-items: center;
     justify-content: space-between;
     background: var(--bg-card);
-    border: 1px solid var(--border-subtle);
+    border: none;
     border-radius: var(--radius-md);
-    padding: 8px 16px;
+    padding: 10px 18px;
     gap: 16px;
     flex-wrap: wrap;
 }
@@ -230,7 +221,7 @@ body {
 .season-filter-left {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     flex-wrap: wrap;
 }
 
@@ -253,11 +244,11 @@ body {
 
 .season-btn {
     background: var(--bg-surface);
-    border: 1px solid var(--border-subtle);
+    border: none;
     color: var(--text-secondary);
     font-size: 0.76rem;
     font-weight: 600;
-    padding: 5px 12px;
+    padding: 6px 14px;
     border-radius: var(--radius-full);
     cursor: pointer;
     transition: all 0.15s ease;
@@ -271,8 +262,7 @@ body {
 .season-btn.active {
     background: var(--fotmob-green);
     color: #ffffff;
-    border-color: var(--fotmob-green);
-    font-weight: 700;
+    font-weight: 800;
 }
 
 .matches-filter-right {
@@ -282,7 +272,7 @@ body {
 
 .matches-pills {
     background: var(--bg-surface);
-    border: 1px solid var(--border-subtle);
+    border: none;
     padding: 3px;
     border-radius: var(--radius-full);
     display: flex;
@@ -296,7 +286,7 @@ body {
     color: var(--text-secondary);
     font-size: 0.76rem;
     font-weight: 600;
-    padding: 4px 14px;
+    padding: 5px 15px;
     border-radius: var(--radius-full);
     cursor: pointer;
     transition: all 0.15s ease;
@@ -313,22 +303,22 @@ body {
 }
 
 /* =========================================================
-   MATCH SELECTORS & VENUE PILLS (FotMob Team Header)
+   MATCH SELECTORS & VENUE PILLS (Borderless Header Cards)
    ========================================================= */
 .selectors-section {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 14px;
+    gap: 16px;
 }
 
 .team-column {
     background: var(--bg-card);
-    border: 1px solid var(--border-subtle);
+    border: none;
     border-radius: var(--radius-md);
-    padding: 12px 14px;
+    padding: 14px 18px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
 }
 
 .select-wrapper {
@@ -339,11 +329,11 @@ body {
 .team-dropdown {
     width: 100%;
     background: var(--bg-surface);
-    border: 1px solid var(--border-subtle);
+    border: none;
     color: #ffffff;
-    font-size: 0.95rem;
+    font-size: 0.96rem;
     font-weight: 800;
-    padding: 9px 12px;
+    padding: 10px 14px;
     border-radius: var(--radius-sm);
     cursor: pointer;
     outline: none;
@@ -351,7 +341,6 @@ body {
 }
 
 .team-dropdown:focus {
-    border-color: var(--border-medium);
     background: var(--bg-surface-hover);
 }
 
@@ -370,11 +359,11 @@ body {
 .venue-btn {
     flex: 1;
     background: var(--bg-surface);
-    border: 1px solid var(--border-subtle);
+    border: none;
     color: var(--text-secondary);
     font-size: 0.76rem;
     font-weight: 600;
-    padding: 5px 8px;
+    padding: 6px 10px;
     border-radius: var(--radius-sm);
     cursor: pointer;
     text-align: center;
@@ -389,21 +378,20 @@ body {
 .venue-btn.active {
     background: #ffffff;
     color: #0a0a0c;
-    border-color: #ffffff;
-    font-weight: 700;
+    font-weight: 800;
 }
 
 /* =========================================================
-   PREDICTION SECTION (FotMob Fixture & Probability Grid)
+   PREDICTION SECTION (FotMob Borderless Surface)
    ========================================================= */
 .sofa-pred-section {
     background: var(--bg-card);
-    border: 1px solid var(--border-subtle);
+    border: none;
     border-radius: var(--radius-lg);
-    padding: 18px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 16px;
 }
 
 /* Top Header Bar */
@@ -414,7 +402,7 @@ body {
     gap: 16px;
     flex-wrap: wrap;
     padding-bottom: 12px;
-    border-bottom: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-divider);
 }
 
 .sofa-title-col {
@@ -447,8 +435,8 @@ body {
     font-weight: 700;
     color: var(--text-secondary);
     background: var(--bg-surface);
-    border: 1px solid var(--border-subtle);
-    padding: 2px 8px;
+    border: none;
+    padding: 3px 9px;
     border-radius: var(--radius-sm);
 }
 
@@ -457,8 +445,7 @@ body {
     font-weight: 700;
     color: var(--fotmob-green);
     background: var(--fotmob-green-bg);
-    border: 1px solid var(--fotmob-green-border);
-    padding: 2px 8px;
+    padding: 3px 9px;
     border-radius: var(--radius-sm);
 }
 
@@ -472,7 +459,7 @@ body {
 
 .sofa-segmented-control {
     background: var(--bg-surface);
-    border: 1px solid var(--border-subtle);
+    border: none;
     padding: 3px;
     border-radius: var(--radius-md);
     display: inline-flex;
@@ -486,7 +473,7 @@ body {
     color: var(--text-secondary);
     font-size: 0.76rem;
     font-weight: 600;
-    padding: 5px 12px;
+    padding: 6px 12px;
     border-radius: var(--radius-sm);
     cursor: pointer;
     display: flex;
@@ -503,7 +490,6 @@ body {
     background: var(--bg-surface-active);
     color: #ffffff;
     font-weight: 700;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 /* Quick Filter Ribbon */
@@ -514,8 +500,8 @@ body {
     gap: 12px;
     flex-wrap: wrap;
     background: var(--bg-dark-well);
-    border: 1px solid var(--border-subtle);
-    padding: 8px 12px;
+    border: none;
+    padding: 10px 14px;
     border-radius: var(--radius-md);
 }
 
@@ -528,11 +514,11 @@ body {
 
 .sofa-filter-chip {
     background: var(--bg-surface);
-    border: 1px solid var(--border-subtle);
+    border: none;
     color: var(--text-secondary);
     font-size: 0.74rem;
     font-weight: 600;
-    padding: 4px 11px;
+    padding: 5px 12px;
     border-radius: var(--radius-full);
     cursor: pointer;
     display: flex;
@@ -549,8 +535,7 @@ body {
 .sofa-filter-chip.active {
     background: #ffffff;
     color: #0a0a0c;
-    border-color: #ffffff;
-    font-weight: 700;
+    font-weight: 800;
 }
 
 .dot-indicator {
@@ -578,9 +563,9 @@ body {
 
 .pred-period-card {
     background: var(--bg-dark-well);
-    border: 1px solid var(--border-subtle);
+    border: none;
     border-radius: var(--radius-md);
-    padding: 14px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -591,7 +576,7 @@ body {
     align-items: center;
     justify-content: space-between;
     padding-bottom: 8px;
-    border-bottom: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-divider);
 }
 
 .period-title {
@@ -609,12 +594,11 @@ body {
     font-weight: 700;
     color: var(--fotmob-blue);
     background: var(--fotmob-blue-bg);
-    border: 1px solid var(--fotmob-blue-border);
-    padding: 2px 7px;
+    padding: 3px 8px;
     border-radius: var(--radius-sm);
 }
 
-/* NO INTERNAL SCROLL - Cards expand naturally so user uses main page scroll */
+/* NO INTERNAL SCROLL - Smooth Flow */
 .pred-picks-list {
     display: flex;
     flex-direction: column;
@@ -622,13 +606,13 @@ body {
 }
 
 /* =========================================================
-   FOTMOB MATCH PICK CARD (Clean, Flat, Non-Glowing)
+   FOTMOB MATCH PICK CARD (Borderless Matte Finish)
    ========================================================= */
 .sofa-pick-card {
-    background: #171a21;
-    border: 1px solid var(--border-subtle);
+    background: #1b1e26;
+    border: none;
     border-radius: var(--radius-sm);
-    padding: 10px 12px;
+    padding: 11px 13px;
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -642,8 +626,7 @@ body {
 }
 
 .sofa-pick-card:hover {
-    background: #1d212a;
-    border-color: var(--border-medium);
+    background: #232732;
 }
 
 /* Card Top Row */
@@ -703,13 +686,11 @@ body {
 .badge-pill-over {
     background: var(--fotmob-green-bg);
     color: #4ade80;
-    border: 1px solid var(--fotmob-green-border);
 }
 
 .badge-pill-under {
     background: var(--fotmob-red-bg);
     color: #f87171;
-    border: 1px solid var(--fotmob-red-border);
 }
 
 .sofa-status-text {
@@ -746,12 +727,11 @@ body {
 
 /* =========================================================
    SOFT CALM PASTEL YELLOW SELECTED STATE (Pilihan User)
-   Tenang, nyaman, tidak mencolok/silau
    ========================================================= */
 .sofa-pick-card.is-selected {
     background: var(--soft-yellow-bg) !important;
-    border: 1.5px solid var(--soft-yellow-border) !important;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
+    border: none !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
 }
 
 .sofa-pick-card.is-selected .sofa-market-name {
@@ -796,9 +776,9 @@ body {
 /* Reasoning Box */
 .pred-reasoning-box {
     background: var(--bg-surface);
-    border: 1px solid var(--border-subtle);
+    border: none;
     border-radius: var(--radius-sm);
-    padding: 8px 10px;
+    padding: 10px 12px;
     display: flex;
     flex-direction: column;
     gap: 3px;
@@ -822,13 +802,13 @@ body {
 }
 
 /* =========================================================
-   SELECTED PICKS COMPARISON PANEL (FotMob Drawer)
+   SELECTED PICKS COMPARISON PANEL (Borderless Drawer)
    ========================================================= */
 .sofa-compare-panel {
     background: var(--bg-dark-well);
-    border: 1px solid var(--border-subtle);
+    border: none;
     border-radius: var(--radius-md);
-    padding: 14px 16px;
+    padding: 16px 18px;
 }
 
 .compare-panel-header {
@@ -836,7 +816,7 @@ body {
     align-items: center;
     justify-content: space-between;
     padding-bottom: 10px;
-    border-bottom: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-divider);
     margin-bottom: 12px;
     flex-wrap: wrap;
     gap: 8px;
@@ -855,19 +835,18 @@ body {
 .compare-counter-badge {
     font-size: 0.7rem;
     font-weight: 700;
-    padding: 2px 7px;
+    padding: 3px 8px;
     border-radius: var(--radius-full);
     background: var(--fotmob-amber-bg);
     color: #fbbf24;
-    border: 1px solid var(--fotmob-amber-border);
 }
 
 .compare-reset-btn {
     background: var(--fotmob-red-bg);
     color: #f87171;
-    border: 1px solid var(--fotmob-red-border);
+    border: none;
     border-radius: var(--radius-sm);
-    padding: 4px 10px;
+    padding: 5px 12px;
     font-size: 0.74rem;
     font-weight: 600;
     cursor: pointer;
@@ -890,9 +869,9 @@ body {
 
 .compare-col {
     background: var(--bg-surface);
-    border: 1px solid var(--border-subtle);
+    border: none;
     border-radius: var(--radius-sm);
-    padding: 10px;
+    padding: 12px;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -903,8 +882,8 @@ body {
     font-size: 0.76rem;
     font-weight: 700;
     color: var(--text-secondary);
-    border-bottom: 1px dashed var(--border-subtle);
-    padding-bottom: 5px;
+    border-bottom: 1px solid var(--border-divider);
+    padding-bottom: 6px;
     display: flex;
     align-items: center;
     gap: 6px;
@@ -932,8 +911,8 @@ body {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    border: 1px solid var(--soft-yellow-border);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    border: none;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
     position: relative;
 }
 
@@ -980,7 +959,7 @@ body {
    ========================================================= */
 .matrix-card {
     background: var(--bg-card);
-    border: 1px solid var(--border-subtle);
+    border: none;
     border-radius: var(--radius-lg);
     padding: 20px;
     overflow-x: auto;
@@ -996,7 +975,7 @@ body {
 .matrix-table th,
 .matrix-table td {
     padding: 8px 6px;
-    border-bottom: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-divider);
 }
 
 .header-group-row th {
@@ -1089,8 +1068,8 @@ body {
    FOOTER
    ========================================================= */
 .app-footer {
-    border-top: 1px solid var(--border-subtle);
-    padding: 20px;
+    border-top: 1px solid var(--border-divider);
+    padding: 24px;
     text-align: center;
     font-size: 0.76rem;
     color: var(--text-muted);
@@ -1112,5 +1091,8 @@ body {
         flex-direction: column;
         align-items: flex-start;
         gap: 10px;
+    }
+    .main-wrapper {
+        padding: 16px;
     }
 }
