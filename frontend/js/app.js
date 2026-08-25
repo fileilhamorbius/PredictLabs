@@ -165,16 +165,6 @@ function initBetModeToggle() {
             bBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             currentBetMode = btn.getAttribute('data-mode');
-
-            const tip = document.getElementById('sofaRibbonTip');
-            if (tip) {
-                if (currentBetMode === 'parlay') {
-                    tip.innerHTML = `<i class="fa-solid fa-shield-halved" style="color: #38bdf8;"></i> <span><strong>Mode Mix Parlay</strong>: Menampilkan % kelangsungan tiket. Menang/Kalah Setengah tidak mematikan parlay!</span>`;
-                } else {
-                    tip.innerHTML = `<i class="fa-solid fa-circle-info" style="color: #22c55e;"></i> <span><strong>Mode Single Bet</strong>: Menampilkan probabilitas kemenangan murni Pasaran Asia.</span>`;
-                }
-            }
-
             renderPredictions();
         });
     });

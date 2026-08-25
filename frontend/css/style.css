@@ -1,7 +1,7 @@
 /* =========================================================
-   PREDICTLABS - FOTMOB PRO BORDERLESS DARK THEME
-   Smooth layer-based depth, Zero harsh outlines, Spacious layout
-   All typography: 'Inter' family
+   PREDICTLABS - FOTMOB PRO MATTE DARK THEME
+   Zero harsh outlines, Professional balanced typography (Regular/Medium/Semi-Bold)
+   Zero layout shifts (Screen stability) & generous breathing room
    ========================================================= */
 
 :root {
@@ -10,10 +10,10 @@
     --bg-card: #15171e;
     --bg-surface: #1d2028;
     --bg-surface-hover: #262a34;
-    --bg-surface-active: #313643;
+    --bg-surface-active: #2e333f;
     --bg-dark-well: #101217;
 
-    /* Subtle Dividers (Minimal) */
+    /* Subtle Dividers */
     --border-subtle: transparent;
     --border-divider: rgba(255, 255, 255, 0.04);
 
@@ -27,7 +27,7 @@
     --text-muted: #6b7280;
     --text-dim: #4b5563;
 
-    /* Accents (Muted & Functional) */
+    /* Accents (Clean & Functional) */
     --fotmob-green: #00c067;
     --fotmob-green-bg: rgba(0, 192, 103, 0.12);
 
@@ -68,6 +68,7 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
 }
 
 /* =========================================================
@@ -101,21 +102,21 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 1.25rem;
-    font-weight: 900;
-    letter-spacing: -0.5px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: -0.3px;
     color: #ffffff;
     user-select: none;
 }
 
 .logo-icon {
     color: var(--fotmob-green);
-    font-size: 1.15rem;
+    font-size: 1.1rem;
 }
 
 .logo-tag {
     font-size: 0.65rem;
-    font-weight: 700;
+    font-weight: 600;
     letter-spacing: 0.5px;
     color: var(--fotmob-green);
     background: var(--fotmob-green-bg);
@@ -124,7 +125,7 @@ body {
     text-transform: uppercase;
 }
 
-/* League Navigation Tabs (Pill Capsules without outlines) */
+/* League Navigation Tabs */
 .league-tabs {
     display: flex;
     align-items: center;
@@ -142,12 +143,12 @@ body {
     border: none;
     color: var(--text-secondary);
     font-size: 0.82rem;
-    font-weight: 600;
+    font-weight: 500;
     padding: 7px 15px;
     border-radius: var(--radius-full);
     cursor: pointer;
     white-space: nowrap;
-    transition: all 0.15s ease;
+    transition: background 0.15s ease, color 0.15s ease;
 }
 
 .league-pill:hover {
@@ -158,7 +159,7 @@ body {
 .league-pill.active {
     background: #ffffff;
     color: #0a0a0c;
-    font-weight: 800;
+    font-weight: 600;
 }
 
 /* Sync Button */
@@ -167,14 +168,14 @@ body {
     border: none;
     color: var(--text-secondary);
     font-size: 0.78rem;
-    font-weight: 600;
+    font-weight: 500;
     padding: 7px 15px;
     border-radius: var(--radius-full);
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 6px;
-    transition: all 0.15s ease;
+    transition: background 0.15s ease, color 0.15s ease;
 }
 
 .btn-sync:hover {
@@ -191,7 +192,7 @@ body {
 }
 
 /* =========================================================
-   MAIN LAYOUT CONTAINER (With Generous Breathing Room)
+   MAIN LAYOUT CONTAINER (Generous Breathing Room)
    ========================================================= */
 .main-wrapper {
     max-width: 1180px;
@@ -204,7 +205,7 @@ body {
 }
 
 /* =========================================================
-   SEASON & MATCH FILTER BAR (Borderless Flat Layer)
+   SEASON & MATCH FILTER BAR (Seamless Fixed-Height Bar)
    ========================================================= */
 .season-filter-section {
     display: flex;
@@ -216,6 +217,7 @@ body {
     padding: 10px 18px;
     gap: 16px;
     flex-wrap: wrap;
+    min-height: 48px;
 }
 
 .season-filter-left {
@@ -226,14 +228,14 @@ body {
 }
 
 .filter-label {
-    font-size: 0.8rem;
-    font-weight: 700;
+    font-size: 0.78rem;
+    font-weight: 600;
     color: var(--text-secondary);
     display: flex;
     align-items: center;
     gap: 6px;
     text-transform: uppercase;
-    letter-spacing: 0.4px;
+    letter-spacing: 0.3px;
 }
 
 .season-pills {
@@ -247,11 +249,11 @@ body {
     border: none;
     color: var(--text-secondary);
     font-size: 0.76rem;
-    font-weight: 600;
+    font-weight: 500;
     padding: 6px 14px;
     border-radius: var(--radius-full);
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: background 0.15s ease, color 0.15s ease;
 }
 
 .season-btn:hover {
@@ -262,7 +264,7 @@ body {
 .season-btn.active {
     background: var(--fotmob-green);
     color: #ffffff;
-    font-weight: 800;
+    font-weight: 600;
 }
 
 .matches-filter-right {
@@ -285,11 +287,11 @@ body {
     border: none;
     color: var(--text-secondary);
     font-size: 0.76rem;
-    font-weight: 600;
+    font-weight: 500;
     padding: 5px 15px;
     border-radius: var(--radius-full);
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: background 0.15s ease, color 0.15s ease;
 }
 
 .match-btn:hover {
@@ -299,11 +301,11 @@ body {
 .match-btn.active {
     background: #ffffff;
     color: #0a0a0c;
-    font-weight: 800;
+    font-weight: 600;
 }
 
 /* =========================================================
-   MATCH SELECTORS & VENUE PILLS (Borderless Header Cards)
+   MATCH SELECTORS & VENUE PILLS (Stable Dimensions)
    ========================================================= */
 .selectors-section {
     display: grid;
@@ -319,6 +321,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    min-height: 94px;
 }
 
 .select-wrapper {
@@ -328,16 +331,18 @@ body {
 
 .team-dropdown {
     width: 100%;
+    height: 42px;
+    min-height: 42px;
     background: var(--bg-surface);
     border: none;
     color: #ffffff;
-    font-size: 0.96rem;
-    font-weight: 800;
-    padding: 10px 14px;
+    font-size: 0.94rem;
+    font-weight: 600;
+    padding: 0 14px;
     border-radius: var(--radius-sm);
     cursor: pointer;
     outline: none;
-    transition: all 0.15s ease;
+    transition: background 0.15s ease;
 }
 
 .team-dropdown:focus {
@@ -362,12 +367,12 @@ body {
     border: none;
     color: var(--text-secondary);
     font-size: 0.76rem;
-    font-weight: 600;
+    font-weight: 500;
     padding: 6px 10px;
     border-radius: var(--radius-sm);
     cursor: pointer;
     text-align: center;
-    transition: all 0.15s ease;
+    transition: background 0.15s ease, color 0.15s ease;
 }
 
 .venue-btn:hover {
@@ -378,11 +383,11 @@ body {
 .venue-btn.active {
     background: #ffffff;
     color: #0a0a0c;
-    font-weight: 800;
+    font-weight: 600;
 }
 
 /* =========================================================
-   PREDICTION SECTION (FotMob Borderless Surface)
+   PREDICTION SECTION (Clean & Stable Surface)
    ========================================================= */
 .sofa-pred-section {
     background: var(--bg-card);
@@ -420,19 +425,19 @@ body {
 
 .sofa-ai-icon {
     color: var(--fotmob-green);
-    font-size: 1.1rem;
+    font-size: 1.05rem;
 }
 
 .sofa-title {
-    font-size: 1.05rem;
-    font-weight: 900;
-    letter-spacing: -0.3px;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: -0.2px;
     color: #ffffff;
 }
 
 .sofa-chip-model {
     font-size: 0.7rem;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--text-secondary);
     background: var(--bg-surface);
     border: none;
@@ -442,7 +447,7 @@ body {
 
 .sofa-chip-match {
     font-size: 0.7rem;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--fotmob-green);
     background: var(--fotmob-green-bg);
     padding: 3px 9px;
@@ -472,14 +477,14 @@ body {
     border: none;
     color: var(--text-secondary);
     font-size: 0.76rem;
-    font-weight: 600;
+    font-weight: 500;
     padding: 6px 12px;
     border-radius: var(--radius-sm);
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 6px;
-    transition: all 0.15s ease;
+    transition: background 0.15s ease, color 0.15s ease;
 }
 
 .sofa-segment-btn:hover {
@@ -489,19 +494,19 @@ body {
 .sofa-segment-btn.active {
     background: var(--bg-surface-active);
     color: #ffffff;
-    font-weight: 700;
+    font-weight: 600;
 }
 
-/* Quick Filter Ribbon */
+/* Quick Filter Ribbon (No extra tips, just clean chips) */
 .sofa-filter-ribbon {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px;
+    justify-content: flex-start;
+    gap: 8px;
     flex-wrap: wrap;
     background: var(--bg-dark-well);
     border: none;
-    padding: 10px 14px;
+    padding: 8px 12px;
     border-radius: var(--radius-md);
 }
 
@@ -517,14 +522,14 @@ body {
     border: none;
     color: var(--text-secondary);
     font-size: 0.74rem;
-    font-weight: 600;
+    font-weight: 500;
     padding: 5px 12px;
     border-radius: var(--radius-full);
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 6px;
-    transition: all 0.15s ease;
+    transition: background 0.15s ease, color 0.15s ease;
 }
 
 .sofa-filter-chip:hover {
@@ -535,7 +540,7 @@ body {
 .sofa-filter-chip.active {
     background: #ffffff;
     color: #0a0a0c;
-    font-weight: 800;
+    font-weight: 600;
 }
 
 .dot-indicator {
@@ -545,14 +550,6 @@ body {
 }
 .dot-over { background-color: var(--fotmob-green); }
 .dot-under { background-color: var(--fotmob-red); }
-
-.sofa-ribbon-tip {
-    font-size: 0.74rem;
-    color: var(--text-muted);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
 
 /* 3-Column Period Grid (HT, 2HT, FT) */
 .prediction-grid {
@@ -569,6 +566,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 12px;
+    min-height: 380px;
 }
 
 .period-header {
@@ -580,8 +578,8 @@ body {
 }
 
 .period-title {
-    font-size: 0.84rem;
-    font-weight: 800;
+    font-size: 0.82rem;
+    font-weight: 700;
     color: #ffffff;
     display: flex;
     align-items: center;
@@ -591,28 +589,29 @@ body {
 
 .period-badge {
     font-size: 0.72rem;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--fotmob-blue);
     background: var(--fotmob-blue-bg);
     padding: 3px 8px;
     border-radius: var(--radius-sm);
 }
 
-/* NO INTERNAL SCROLL - Smooth Flow */
+/* NO INTERNAL SCROLL - Smooth Natural Flow */
 .pred-picks-list {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    min-height: 240px;
 }
 
 /* =========================================================
-   FOTMOB MATCH PICK CARD (Borderless Matte Finish)
+   FOTMOB MATCH PICK CARD (Clean, Professional Typography)
    ========================================================= */
 .sofa-pick-card {
     background: #1b1e26;
     border: none;
     border-radius: var(--radius-sm);
-    padding: 11px 13px;
+    padding: 10px 12px;
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -622,7 +621,7 @@ body {
     min-height: 64px;
     cursor: pointer;
     user-select: none;
-    transition: all 0.15s ease;
+    transition: background 0.15s ease;
 }
 
 .sofa-pick-card:hover {
@@ -639,7 +638,7 @@ body {
 
 .sofa-market-name {
     font-size: 0.82rem;
-    font-weight: 700;
+    font-weight: 600;
     color: #e5e7eb;
 }
 
@@ -650,8 +649,8 @@ body {
 }
 
 .sofa-pct-value {
-    font-size: 0.92rem;
-    font-weight: 800;
+    font-size: 0.9rem;
+    font-weight: 700;
     color: var(--fotmob-green);
 }
 
@@ -661,7 +660,7 @@ body {
 
 .sofa-pct-sub {
     font-size: 0.68rem;
-    font-weight: 500;
+    font-weight: 400;
     color: var(--text-muted);
 }
 
@@ -675,7 +674,7 @@ body {
 
 .sofa-action-pill {
     font-size: 0.72rem;
-    font-weight: 800;
+    font-weight: 700;
     padding: 2px 7px;
     border-radius: 4px;
     display: inline-flex;
@@ -695,6 +694,7 @@ body {
 
 .sofa-status-text {
     font-size: 0.72rem;
+    font-weight: 400;
     color: var(--text-secondary);
     display: inline-flex;
     align-items: center;
@@ -718,7 +718,7 @@ body {
 .sofa-micro-fill {
     height: 100%;
     background: var(--fotmob-green);
-    transition: width 0.3s ease;
+    transition: width 0.25s ease;
 }
 
 .sofa-pick-card.parlay-safe .sofa-micro-fill {
@@ -731,17 +731,17 @@ body {
 .sofa-pick-card.is-selected {
     background: var(--soft-yellow-bg) !important;
     border: none !important;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2) !important;
 }
 
 .sofa-pick-card.is-selected .sofa-market-name {
     color: var(--soft-yellow-text) !important;
-    font-weight: 800;
+    font-weight: 700;
 }
 
 .sofa-pick-card.is-selected .sofa-pct-value {
     color: #047857 !important;
-    font-weight: 800;
+    font-weight: 700;
 }
 
 .sofa-pick-card.is-selected.parlay-safe .sofa-pct-value {
@@ -754,7 +754,7 @@ body {
 
 .sofa-pick-card.is-selected .sofa-status-text {
     color: #475569 !important;
-    font-weight: 600;
+    font-weight: 500;
 }
 
 .sofa-pick-card.is-selected .sofa-status-text.parlay-shield {
@@ -773,7 +773,7 @@ body {
     background: #0284c7 !important;
 }
 
-/* Reasoning Box */
+/* Reasoning Box (Fixed Min Height for Zero Jitter) */
 .pred-reasoning-box {
     background: var(--bg-surface);
     border: none;
@@ -783,11 +783,12 @@ body {
     flex-direction: column;
     gap: 3px;
     margin-top: 6px;
+    min-height: 60px;
 }
 
 .reasoning-title {
     font-size: 0.72rem;
-    font-weight: 800;
+    font-weight: 600;
     color: var(--text-secondary);
     display: flex;
     align-items: center;
@@ -797,6 +798,7 @@ body {
 
 .reasoning-text {
     font-size: 0.76rem;
+    font-weight: 400;
     color: var(--text-secondary);
     line-height: 1.4;
 }
@@ -823,8 +825,8 @@ body {
 }
 
 .compare-header-title {
-    font-size: 0.86rem;
-    font-weight: 800;
+    font-size: 0.84rem;
+    font-weight: 700;
     color: #ffffff;
     display: flex;
     align-items: center;
@@ -834,7 +836,7 @@ body {
 
 .compare-counter-badge {
     font-size: 0.7rem;
-    font-weight: 700;
+    font-weight: 600;
     padding: 3px 8px;
     border-radius: var(--radius-full);
     background: var(--fotmob-amber-bg);
@@ -848,12 +850,12 @@ body {
     border-radius: var(--radius-sm);
     padding: 5px 12px;
     font-size: 0.74rem;
-    font-weight: 600;
+    font-weight: 500;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 5px;
-    transition: all 0.15s ease;
+    transition: background 0.15s ease, color 0.15s ease;
 }
 
 .compare-reset-btn:hover {
@@ -880,7 +882,7 @@ body {
 
 .compare-col-head {
     font-size: 0.76rem;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--text-secondary);
     border-bottom: 1px solid var(--border-divider);
     padding-bottom: 6px;
@@ -912,7 +914,7 @@ body {
     flex-direction: column;
     gap: 4px;
     border: none;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
     position: relative;
 }
 
@@ -921,14 +923,14 @@ body {
     align-items: center;
     justify-content: space-between;
     font-size: 0.8rem;
-    font-weight: 800;
+    font-weight: 700;
     color: var(--soft-yellow-text);
 }
 
 .compare-item-card .c-val {
     color: #047857;
     font-size: 0.86rem;
-    font-weight: 800;
+    font-weight: 700;
 }
 
 .compare-item-card .c-bottom {
@@ -946,7 +948,7 @@ body {
     border-radius: 3px;
     border: none;
     background: transparent;
-    transition: all 0.15s;
+    transition: background 0.15s, color 0.15s;
 }
 
 .compare-item-card .c-remove:hover {
@@ -955,7 +957,7 @@ body {
 }
 
 /* =========================================================
-   SYMMETRICAL COMPARISON MATRIX TABLE (Clean 2-Row Header)
+   SYMMETRICAL COMPARISON MATRIX TABLE (Fixed Table Layout)
    ========================================================= */
 .matrix-card {
     background: var(--bg-card);
@@ -963,10 +965,12 @@ body {
     border-radius: var(--radius-lg);
     padding: 20px;
     overflow-x: auto;
+    contain: layout;
 }
 
 .matrix-table {
     width: 100%;
+    table-layout: fixed; /* Prevents column jitter/expansion when team changes */
     border-collapse: collapse;
     font-size: 0.84rem;
     text-align: center;
@@ -974,8 +978,11 @@ body {
 
 .matrix-table th,
 .matrix-table td {
-    padding: 8px 6px;
+    padding: 8px 4px;
     border-bottom: 1px solid var(--border-divider);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .header-group-row th {
@@ -986,7 +993,7 @@ body {
 
 .th-stat-label {
     font-size: 0.78rem;
-    font-weight: 800;
+    font-weight: 700;
     letter-spacing: 0.4px;
     text-transform: uppercase;
 }
@@ -1001,9 +1008,9 @@ body {
 
 .th-team-label {
     font-size: 0.72rem;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--text-secondary);
-    max-width: 140px;
+    max-width: 130px;
     margin: 2px auto 0;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1011,20 +1018,20 @@ body {
 }
 
 .metric-center-header {
-    width: 80px;
+    width: 76px;
     background: transparent;
 }
 
 .header-sub-row th {
     font-size: 0.74rem;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--text-muted);
     background: var(--bg-surface);
 }
 
 .metric-label-col {
     color: #ffffff;
-    font-weight: 800;
+    font-weight: 700;
 }
 
 /* Table Body Rows */
@@ -1033,14 +1040,14 @@ body {
 }
 
 .metric-name {
-    font-weight: 800;
+    font-weight: 700;
     color: #ffffff;
     background: var(--bg-surface);
     font-size: 0.82rem;
 }
 
 .font-bold {
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .text-red {
@@ -1055,7 +1062,7 @@ body {
 
 .badge-half-win {
     color: #fbbf24;
-    font-weight: 800;
+    font-weight: 700;
     font-size: 0.85rem;
 }
 
