@@ -933,6 +933,27 @@ body {
     font-weight: 700;
 }
 
+.compare-item-card .c-middle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    margin: 2px 0;
+}
+
+.c-buffer-tag {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #0369a1;
+    background: rgba(2, 132, 199, 0.12);
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    letter-spacing: 0.2px;
+}
+
 .compare-item-card .c-bottom {
     display: flex;
     align-items: center;

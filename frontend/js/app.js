@@ -344,13 +344,13 @@ function renderPredictions() {
             statusHTML = `<span class="sofa-status-text"><i class="fa-solid ${statusIcon}"></i> ${pickData.outcome_text}</span>`;
         }
 
-        return `
-            <div class="sofa-pick-card ${cardStateClass} ${isSelected ? 'is-selected' : ''}"
+        return `                <div class="sofa-pick-card ${cardStateClass} ${isSelected ? 'is-selected' : ''}"
                  data-period="${period}"
                  data-key="${pickKey}"
                  data-label="${pickData.label}"
                  data-pick="${pickData.pick}"
                  data-conf="${confValue}"
+                 data-buffer="${pickData.buffer_goals !== undefined ? pickData.buffer_goals : 0}"
                  data-is-over="${pickData.is_over}"
                  data-mode="${isParlayMode ? 'parlay' : 'single'}"
                  data-loss="${pickData.parlay_loss_pct || 0}"
@@ -453,6 +453,7 @@ function toggleCardSelection(cardElem) {
     const label = cardElem.getAttribute('data-label');
     const pick = cardElem.getAttribute('data-pick');
     const conf = cardElem.getAttribute('data-conf');
+    const buffer = cardElem.getAttribute('data-buffer') || '0';
     const isOver = cardElem.getAttribute('data-is-over') === 'true';
     const mode = cardElem.getAttribute('data-mode');
     const loss = cardElem.getAttribute('data-loss');
@@ -471,6 +472,7 @@ function toggleCardSelection(cardElem) {
             label,
             pick,
             conf,
+            buffer,
             isOver,
             mode,
             loss,
@@ -500,23 +502,33 @@ function renderComparePanel() {
             return;
         }
 
-        container.innerHTML = list.map(item => `
+        container.innerHTML = list.map(item => {
+            const bufNum = parseFloat(item.buffer || 0);
+            const bufText = (bufNum >= 0 ? '+' : '') + bufNum.toFixed(2);
+            return `
             <div class="compare-item-card">
                 <div class="c-top">
                     <span>${item.label}</span>
                     <span class="c-val">${item.conf}% <span style="font-size:0.68rem; font-weight:normal; color:#64748b;">${item.mode === 'parlay' ? 'Aman' : 'Peluang'}</span></span>
                 </div>
-                <div class="c-bottom">
+                <div class="c-middle">
                     <span class="sofa-action-pill ${item.isOver ? 'badge-pill-over' : 'badge-pill-under'}" style="font-size: 0.7rem; padding: 2px 7px;">${item.pick}</span>
+                    <span class="c-buffer-tag" title="Safety Buffer: Margin Jarak Pasaran ke Ekspektasi Gol">
+                        <i class="fa-solid fa-shield"></i> Buffer: ${bufText} Gol
+                    </span>
+                </div>
+                <div class="c-bottom">
                     <span style="font-size: 0.72rem; color: #475569;">
-                        ${item.mode === 'parlay' ? `🛡️ Resiko: ${item.loss}%` : `${item.outcome}`}
+                        ${item.mode === 'parlay' ? `Resiko: ${item.loss}%` : `${item.outcome}`}
                     </span>
                     <button class="c-remove" onclick="removeSelectedPick('${periodKey}', '${item.key}')" title="Hapus dari komparasi">
                         <i class="fa-solid fa-xmark"></i>
                     </button>
                 </div>
             </div>
-        `).join('');
+            `;
+        }).join('');
+    }');
     }
 
     renderCol('ht', 'compareBodyHT', 'HT');

@@ -249,17 +249,23 @@ def calculate_statistical_prediction(
         p = calculate_asian_over_under_prob(line, ht_total_pmf)
         p["label"] = "Total Laga"
         p["category"] = "match"
+        buf = round(line - lam_tot_ht, 2) if not p["is_over"] else round(lam_tot_ht - line, 2)
+        p["buffer_goals"] = buf
         ht_picks_list.append(p)
 
     for line in [0.75, 1.25, 1.75, 2.25]:
         p1 = calculate_asian_over_under_prob(line, lam_t1_ht)
         p1["label"] = team1_name
         p1["category"] = "team1"
+        buf1 = round(line - lam_t1_ht, 2) if not p1["is_over"] else round(lam_t1_ht - line, 2)
+        p1["buffer_goals"] = buf1
         ht_picks_list.append(p1)
 
         p2 = calculate_asian_over_under_prob(line, lam_t2_ht)
         p2["label"] = team2_name
         p2["category"] = "team2"
+        buf2 = round(line - lam_t2_ht, 2) if not p2["is_over"] else round(lam_t2_ht - line, 2)
+        p2["buffer_goals"] = buf2
         ht_picks_list.append(p2)
 
     ht_picks_list.sort(key=lambda x: x["conf_pct"], reverse=True)
@@ -275,17 +281,23 @@ def calculate_statistical_prediction(
         p = calculate_asian_over_under_prob(line, sh_total_pmf)
         p["label"] = "Total Laga"
         p["category"] = "match"
+        buf = round(line - lam_tot_2h, 2) if not p["is_over"] else round(lam_tot_2h - line, 2)
+        p["buffer_goals"] = buf
         sh_picks_list.append(p)
 
     for line in [0.75, 1.25, 1.75, 2.25, 2.75]:
         p1 = calculate_asian_over_under_prob(line, lam_t1_2h)
         p1["label"] = team1_name
         p1["category"] = "team1"
+        buf1 = round(line - lam_t1_2h, 2) if not p1["is_over"] else round(lam_t1_2h - line, 2)
+        p1["buffer_goals"] = buf1
         sh_picks_list.append(p1)
 
         p2 = calculate_asian_over_under_prob(line, lam_t2_2h)
         p2["label"] = team2_name
         p2["category"] = "team2"
+        buf2 = round(line - lam_t2_2h, 2) if not p2["is_over"] else round(lam_t2_2h - line, 2)
+        p2["buffer_goals"] = buf2
         sh_picks_list.append(p2)
 
     sh_picks_list.sort(key=lambda x: x["conf_pct"], reverse=True)
@@ -301,17 +313,23 @@ def calculate_statistical_prediction(
         p = calculate_asian_over_under_prob(line, ft_total_pmf)
         p["label"] = "Total Laga"
         p["category"] = "match"
+        buf = round(line - lam_tot_ft, 2) if not p["is_over"] else round(lam_tot_ft - line, 2)
+        p["buffer_goals"] = buf
         ft_picks_list.append(p)
 
     for line in [0.75, 1.25, 1.75, 2.25, 2.75, 3.25, 3.75, 4.25]:
         p1 = calculate_asian_over_under_prob(line, lam_t1_ft)
         p1["label"] = team1_name
         p1["category"] = "team1"
+        buf1 = round(line - lam_t1_ft, 2) if not p1["is_over"] else round(lam_t1_ft - line, 2)
+        p1["buffer_goals"] = buf1
         ft_picks_list.append(p1)
 
         p2 = calculate_asian_over_under_prob(line, lam_t2_ft)
         p2["label"] = team2_name
         p2["category"] = "team2"
+        buf2 = round(line - lam_t2_ft, 2) if not p2["is_over"] else round(lam_t2_ft - line, 2)
+        p2["buffer_goals"] = buf2
         ft_picks_list.append(p2)
 
     ft_picks_list.sort(key=lambda x: x["conf_pct"], reverse=True)
