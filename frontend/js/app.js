@@ -528,7 +528,6 @@ function renderComparePanel() {
             </div>
             `;
         }).join('');
-    }');
     }
 
     renderCol('ht', 'compareBodyHT', 'HT');
