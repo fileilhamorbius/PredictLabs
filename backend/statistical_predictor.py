@@ -242,8 +242,8 @@ def calculate_statistical_prediction(
     # PURE ASIAN QUARTER-LINES ONLY (0.25, 0.75, 1.25, 1.75, 2.25, 2.75, etc.)
     # =========================================================================
 
-    # 1. BABAK 1 (HT) - Pure Asian Lines (0.75 to 3.25)
-    ht_asian_lines = [0.75, 1.25, 1.75, 2.25, 2.75, 3.25]
+    # 1. BABAK 1 (HT) - Pure Asian Lines (0.75 to 2.25)
+    ht_asian_lines = [0.75, 1.25, 1.75, 2.25]
     ht_picks_list = []
     for line in ht_asian_lines:
         p = calculate_asian_over_under_prob(line, ht_total_pmf)
@@ -253,7 +253,7 @@ def calculate_statistical_prediction(
         p["buffer_goals"] = buf
         ht_picks_list.append(p)
 
-    for line in [0.75, 1.25, 1.75, 2.25]:
+    for line in [0.75, 1.25, 1.75]:
         p1 = calculate_asian_over_under_prob(line, lam_t1_ht)
         p1["label"] = team1_name
         p1["category"] = "team1"
@@ -274,8 +274,8 @@ def calculate_statistical_prediction(
     ht_high_under = [p for p in ht_high_prob if not p["is_over"]]
     ht_parlay_safe = [p for p in sorted(ht_picks_list, key=lambda x: x["parlay_safety_pct"], reverse=True) if p["parlay_safety_pct"] >= 85]
 
-    # 2. BABAK 2 (2HT) - Pure Asian Lines (0.75 to 4.25)
-    sh_asian_lines = [0.75, 1.25, 1.75, 2.25, 2.75, 3.25, 3.75, 4.25]
+    # 2. BABAK 2 (2HT) - Pure Asian Lines (0.75 to 2.25)
+    sh_asian_lines = [0.75, 1.25, 1.75, 2.25]
     sh_picks_list = []
     for line in sh_asian_lines:
         p = calculate_asian_over_under_prob(line, sh_total_pmf)
@@ -285,7 +285,7 @@ def calculate_statistical_prediction(
         p["buffer_goals"] = buf
         sh_picks_list.append(p)
 
-    for line in [0.75, 1.25, 1.75, 2.25, 2.75]:
+    for line in [0.75, 1.25, 1.75]:
         p1 = calculate_asian_over_under_prob(line, lam_t1_2h)
         p1["label"] = team1_name
         p1["category"] = "team1"
